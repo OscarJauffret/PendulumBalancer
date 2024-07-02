@@ -82,14 +82,12 @@ void Pendulum::update(Time timePerFrame) {
 void Pendulum::applyGravity(const Time &timePerFrame) {
     angularAcceleration = -gravity / length * sin(angle) - baseAcceleration / length * cos(angle) - damping / length * angularVelocity;
     angularVelocity += angularAcceleration * timePerFrame.asSeconds();
-    cout << "Angular velocity: " << angularVelocity << endl;
     angle += angularVelocity * timePerFrame.asSeconds();
 }
 
 void Pendulum::updatePosition(const Time &timePerFrame) {
     baseVelocity += baseAcceleration * timePerFrame.asSeconds();
     baseVelocity -= friction * baseVelocity * timePerFrame.asSeconds();
-    cout << "Base velocity: " << baseVelocity << endl;
     basePosition += baseVelocity * timePerFrame.asSeconds();
     checkCollision();
 }
