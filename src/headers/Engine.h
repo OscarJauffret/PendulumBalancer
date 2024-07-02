@@ -21,6 +21,7 @@ private:
     const unsigned int FPS = 60;
     static const Time timePerFrame;
     float yThreshold;
+    const float lengthThreshold = 0.8f;
     int score;
 
     Pendulum pendulum;
@@ -28,12 +29,16 @@ private:
     sf::Clock clock;
     sf::Time timeSinceLastUpdate;
 
+    sf::Font font;
+
 public:
     Engine();
     void resetGame();
-    void input();
-    void draw();
-    void draw_inputs(string text);
+    char input();
+    void draw(char key, int score);
+    void draw_inputs(char key);
+    void draw_score(int score);
+    void draw_threshold();
     void run();
 
     void update_pendulum();

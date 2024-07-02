@@ -41,6 +41,8 @@ public:
     void moveRight();
     void stop();
 
+    float getTrackPositionY() const;
+
     void update(Time timePerFrame);
     void applyGravity(const Time &timePerFrame);
     void checkCollision();
@@ -50,13 +52,13 @@ public:
     float getTipY() const;
 
     float getPendulumLength() const;
-    float getPosition();
-    float getAngularVelocity();
-    float getAngleCos();
-    float getAngleSin();
-    float getAcceleration();
 
-    float getVelocity();
+    float getPosition() const;
+    float getAngularVelocity() const;
+    float getAngleCos() const;
+    float getAngleSin() const;
+    float getAcceleration() const;
+    float getVelocity() const;
 };
 
 

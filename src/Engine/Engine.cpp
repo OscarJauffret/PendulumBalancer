@@ -7,10 +7,13 @@
 
 const sf::Time Engine::timePerFrame = sf::seconds(1.f/60.f);
 
-Engine::Engine(): resolution(800, 600), window(VideoMode(resolution.x, resolution.y), "Pendulum Balancer", Style::Default),
+Engine::Engine(): resolution(800, 600), window(VideoMode(resolution.x, resolution.y), "Pendulum Balancer", Style::Default, sf::ContextSettings(0, 0, 8)),
           pendulum(Vector2f(window.getSize().x / 2, window.getSize().y / 2)), score(0) {
     window.setFramerateLimit(FPS);
-    yThreshold = window.getSize().y / 2 - pendulum.getPendulumLength() / 2;
+    yThreshold = pendulum.getTrackPositionY() - pendulum.getPendulumLength() * lengthThreshold;
+    if (!font.loadFromFile("../src/assets/Roboto-regular.ttf")) {
+        std::cerr << "Failed to load font" << std::endl;
+    }
 }
 
 void Engine::update_pendulum() {
@@ -28,6 +31,7 @@ int Engine::getScore() {
 void Engine::run() {
     clock.restart();
     timeSinceLastUpdate = sf::Time::Zero;
+    char key = ' ';
 
     while (window.isOpen()) {
         sf::Time dt = clock.restart();
@@ -36,17 +40,16 @@ void Engine::run() {
         while (timeSinceLastUpdate > timePerFrame) {
             timeSinceLastUpdate -= timePerFrame;
 
-            input();
+            key = input();
             update_pendulum();
 
             // Vérifier la position du pendule
             if (pendulum.getTipY() < yThreshold) {
                 score++;
-                cout << "Score: " << score << endl;
             }
         }
 
-        draw();
+        draw(key, score);
     }
 }
 

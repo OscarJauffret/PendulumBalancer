@@ -50,6 +50,11 @@ Pendulum::Pendulum(Vector2f startPosition) {
     track.setPosition(startPosition);
 }
 
+float Pendulum::getTrackPositionY() const {
+    return trackPosition.y;
+
+}
+
 void Pendulum::moveLeft() {
     if (basePosition != -(trackWidth / 2)) {
         baseAcceleration = -500;
@@ -119,26 +124,26 @@ float Pendulum::getPendulumLength() const {
     return length;
 }
 
-float Pendulum::getPosition() {
+float Pendulum::getPosition() const {
     return basePosition;
 }
 
-float Pendulum::getAngularVelocity() {
+float Pendulum::getAngularVelocity() const {
     return angularVelocity;
 }
 
-float Pendulum::getAngleCos() {
+float Pendulum::getAngleCos() const {
     return cos(angle);
 }
 
-float Pendulum::getAngleSin() {
+float Pendulum::getAngleSin() const {
     return sin(angle);
 }
 
-float Pendulum::getAcceleration() {
+float Pendulum::getAcceleration() const {
     return baseAcceleration;
 }
 
-float Pendulum::getVelocity() {
+float Pendulum::getVelocity() const {
     return baseVelocity;
 }
