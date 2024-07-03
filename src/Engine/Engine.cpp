@@ -11,7 +11,7 @@ Engine::Engine(): resolution(800, 600), window(VideoMode(resolution.x, resolutio
           pendulum(Vector2f(window.getSize().x / 2, window.getSize().y / 2)), score(0) {
     window.setFramerateLimit(FPS);
     yThreshold = pendulum.getTrackPositionY() - pendulum.getPendulumLength() * lengthThreshold;
-    if (!font.loadFromFile("../src/assets/Roboto-regular.ttf")) {
+    if (!font.loadFromFile(config::assets::fontPath)) {
         std::cerr << "Failed to load font" << std::endl;
     }
 }
@@ -43,13 +43,26 @@ void Engine::run() {
             key = input();
             update_pendulum();
 
-            // Vérifier la position du pendule
-            if (pendulum.getTipY() < yThreshold) {
-                score++;
-            }
+            checkTipPosition();
+            incrementScore();
         }
 
-        draw(key, score);
+        draw(key);
+    }
+}
+
+void Engine::checkTipPosition() {
+    if (pendulum.getTipY() < yThreshold) {
+        timeAboveThreshold += timePerFrame.asSeconds();
+    } else {
+        timeAboveThreshold = 0;
+    }
+}
+
+void Engine::incrementScore() {
+    if (timeAboveThreshold > 1) {
+        score++;
+        timeAboveThreshold = 0;
     }
 }
 

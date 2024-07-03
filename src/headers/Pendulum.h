@@ -5,6 +5,7 @@
 #ifndef PENDULUMBALANCERAI_PENDULUM_H
 #define PENDULUMBALANCERAI_PENDULUM_H
 
+#include "../config/configuration.h"
 
 #include <SFML/Graphics.hpp>
 #include <cmath>
@@ -21,7 +22,7 @@ class Pendulum {
     float friction;
 
     Vector2f trackPosition;
-    const float trackWidth = 600;
+    const float trackWidth = config::pendulum::dimensions::trackWidth;
     float basePosition;
     float baseVelocity;     //The speed is in px/s
     float baseAcceleration; //The acceleration is in px/s^2
@@ -49,8 +50,8 @@ public:
     void updatePosition(const Time &timePerFrame);
 
     void draw(RenderWindow& window);
-    float getTipY() const;
 
+    float getTipY() const;
     float getPendulumLength() const;
 
     float getPosition() const;
@@ -59,6 +60,13 @@ public:
     float getAngleSin() const;
     float getAcceleration() const;
     float getVelocity() const;
+
+    void initializeShape(const Vector2f &startPosition);
+    void initializeBar();
+    void initializeBall(CircleShape& ball, float radius, Color color, float outlineThickness, Color outlineColor, float positionX, float positionY);
+    void initializeTrack(const Vector2f &startPosition);
+
+    void initializeBalls();
 };
 
 

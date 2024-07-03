@@ -3,19 +3,19 @@
 //
 #include "../headers/Engine.h"
 
-void Engine::draw(char key, int score) {
-    window.clear(Color::Black);
+void Engine::draw(char key) {
+    window.clear(config::colors::backgroundColor);
+    draw_threshold();
     pendulum.draw(window);
     draw_inputs(key);
-    draw_score(score);
-    draw_threshold();
+    draw_score();
     window.display();
 }
 
 void Engine::draw_inputs(char key) {
     RectangleShape rectangleInput;
     rectangleInput.setSize(Vector2f(100, 100));
-    rectangleInput.setFillColor(Color(80, 80, 80));
+    rectangleInput.setFillColor(config::colors::inputRectColor);
     rectangleInput.setPosition(10, 10);
     window.draw(rectangleInput);
 
@@ -28,8 +28,7 @@ void Engine::draw_inputs(char key) {
     window.draw(input_text);
 }
 
-void Engine::draw_score(int score) {
-
+void Engine::draw_score() {
     sf::Text score_text;
     score_text.setFont(font);
     score_text.setString("Score: " + std::to_string(score));
@@ -41,8 +40,9 @@ void Engine::draw_score(int score) {
 
 void Engine::draw_threshold() {
     sf::RectangleShape threshold;
-    threshold.setSize(Vector2f(window.getSize().x, 5));
-    threshold.setFillColor(Color::Red);
-    threshold.setPosition(0, yThreshold);
+    threshold.setSize(Vector2f(config::pendulum::dimensions::trackWidth , config::pendulum::dimensions::trackHeight));
+    threshold.setFillColor(config::colors::thresholdColor);
+    threshold.setOrigin(Vector2f(threshold.getSize().x / 2, threshold.getSize().y / 2));
+    threshold.setPosition(window.getSize().x / 2, yThreshold);
     window.draw(threshold);
 }

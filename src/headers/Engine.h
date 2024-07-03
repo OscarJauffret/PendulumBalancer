@@ -6,6 +6,7 @@
 #define PENDULUMBALANCERAI_ENGINE_H
 
 #include "../headers/Pendulum.h"
+#include "../config/configuration.h"
 
 #include <SFML/Graphics.hpp>
 #include <SFML/Graphics/RectangleShape.hpp>
@@ -15,13 +16,14 @@ using namespace std;
 
 class Engine {
 private:
-    // Window
     Vector2f resolution;
     RenderWindow window;
     const unsigned int FPS = 60;
     static const Time timePerFrame;
+
     float yThreshold;
     const float lengthThreshold = 0.8f;
+    float timeAboveThreshold = 0;
     int score;
 
     Pendulum pendulum;
@@ -35,15 +37,19 @@ public:
     Engine();
     void resetGame();
     char input();
-    void draw(char key, int score);
+    void draw(char key);
     void draw_inputs(char key);
-    void draw_score(int score);
+    void draw_score();
     void draw_threshold();
     void run();
 
     void update_pendulum();
     int getScore();
     float getInputValue(int inputId);
+
+    void checkTipPosition();
+
+    void incrementScore();
 };
 
 

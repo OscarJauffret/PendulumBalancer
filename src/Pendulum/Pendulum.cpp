@@ -2,52 +2,30 @@
 // Created by oscar on 02/07/2024.
 //
 
-#include "headers/Pendulum.h"
+#include "../headers/Pendulum.h"
+
 #define M_PI 3.14159265358979323846
 
 using std::cout; using std::endl;
 
 Pendulum::Pendulum(Vector2f startPosition) {
-    // Initialize the pendulum with default values
-    length = 100.0;
-    angle = 0.0;
-    angularVelocity = 0.0;
-    angularAcceleration = 0.0;
-    damping = 20.0;
-    gravity = 400;
-    friction = 2;
+    length = config::pendulum::dimensions::length;
+    angle = config::pendulum::startAngle;
+
+    damping = config::physics::damping;
+    gravity = config::physics::gravity;
+    friction = config::physics::friction;
+
+    angularVelocity = config::pendulum::startAngularVelocity;
+    angularAcceleration = config::pendulum::startAngularAcceleration;
 
     trackPosition = startPosition;
-    basePosition = 0.0;
-    baseVelocity = 0.0;
-    baseAcceleration = 0.0;
+    basePosition = config::pendulum::startPosition;
+    baseVelocity = config::pendulum::startVelocity;
+    baseAcceleration = config::pendulum::startAcceleration;
 
-    // Initialize the pendulum's shape
-    bar.setSize(Vector2f(5, length));
-    bar.setFillColor(Color::White);
-    bar.setOrigin(Vector2f(bar.getSize().x / 2, 0));
-    bar.setPosition(trackPosition.x, trackPosition.y);
+    initializeShape(startPosition);
 
-    tipBall.setRadius(10);
-    tipBall.setFillColor(Color(208, 100, 75));
-    tipBall.setOutlineThickness(3);
-    tipBall.setOutlineColor(Color::White);
-    tipBall.setOrigin(tipBall.getRadius(), tipBall.getRadius());
-    tipBall.setPosition(bar.getPosition().x, bar.getPosition().y + bar.getSize().y);
-
-    baseBall.setRadius(10);
-    baseBall.setFillColor(Color(208, 100, 75));
-    baseBall.setOutlineThickness(3);
-    baseBall.setOutlineColor(Color::White);
-    baseBall.setOrigin(baseBall.getRadius(), baseBall.getRadius());
-    baseBall.setPosition(bar.getPosition().x, bar.getPosition().y);
-
-    track.setSize(Vector2f(trackWidth, 5));
-    track.setFillColor(Color::Black);
-    track.setOutlineThickness(2);
-    track.setOutlineColor(Color::White);
-    track.setOrigin(Vector2f(track.getSize().x / 2, track.getSize().y / 2));
-    track.setPosition(startPosition);
 }
 
 float Pendulum::getTrackPositionY() const {
@@ -57,13 +35,13 @@ float Pendulum::getTrackPositionY() const {
 
 void Pendulum::moveLeft() {
     if (basePosition != -(trackWidth / 2)) {
-        baseAcceleration = -500;
+        baseAcceleration = -config::pendulum::acceleration;
     }
 }
 
 void Pendulum::moveRight() {
     if (basePosition != trackWidth / 2) {
-        baseAcceleration = 500;
+        baseAcceleration = config::pendulum::acceleration;
     }
 }
 
@@ -74,7 +52,6 @@ void Pendulum::stop() {
 void Pendulum::update(Time timePerFrame) {
     applyGravity(timePerFrame);
     updatePosition(timePerFrame);
-    //updateAngle(timePerFrame);
 
     // Mettre à jour les positions des composants du pendule
     bar.setRotation(-angle * 180 / M_PI);
