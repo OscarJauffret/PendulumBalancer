@@ -5,8 +5,8 @@
 #ifndef PENDULUMBALANCERAI_ENGINE_H
 #define PENDULUMBALANCERAI_ENGINE_H
 
-#include "../headers/Pendulum.h"
-#include "../config/configuration.h"
+#include "Pendulum.h"
+#include "../../config/configuration.h"
 
 #include <SFML/Graphics.hpp>
 #include <SFML/Graphics/RectangleShape.hpp>
@@ -18,7 +18,7 @@ class Engine {
 private:
     Vector2f resolution;
     RenderWindow window;
-    const unsigned int FPS = 60;
+    const unsigned int FPS = config::window::fps;
     static const Time timePerFrame;
 
     float yThreshold;
@@ -36,20 +36,28 @@ private:
 public:
     Engine();
     void resetGame();
-    char input();
-    void draw(char key);
-    void draw_inputs(char key);
+
+    int input(Mode mode);
+    int userInput();
+    int AiInput();
+
+    void draw(int key);
+    void draw_inputs(int key);
     void draw_score();
     void draw_threshold();
-    void run();
+    void run(Mode mode);
 
-    void update_pendulum();
+    void updatePendulum();
     int getScore();
     float getInputValue(int inputId);
 
     void checkTipPosition();
 
     void incrementScore();
+
+    void handleWindowClosed(const Event &event);
+
+    int handleMovement();
 };
 
 

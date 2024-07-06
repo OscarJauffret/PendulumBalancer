@@ -2,12 +2,13 @@
 // Created by oscar on 02/07/2024.
 //
 
-#include "../headers/Engine.h"
+#include "./headers/Engine.h"
+#include <filesystem>
 
 
 const sf::Time Engine::timePerFrame = sf::seconds(1.f/60.f);
 
-Engine::Engine(): resolution(800, 600), window(VideoMode(resolution.x, resolution.y), "Pendulum Balancer", Style::Default, sf::ContextSettings(0, 0, 8)),
+Engine::Engine(): resolution(config::window::width, config::window::height), window(VideoMode(resolution.x, resolution.y), "Pendulum Balancer", Style::Default, sf::ContextSettings(0, 0, 8)),
           pendulum(Vector2f(window.getSize().x / 2, window.getSize().y / 2)), score(0) {
     window.setFramerateLimit(FPS);
     yThreshold = pendulum.getTrackPositionY() - pendulum.getPendulumLength() * lengthThreshold;
@@ -16,7 +17,7 @@ Engine::Engine(): resolution(800, 600), window(VideoMode(resolution.x, resolutio
     }
 }
 
-void Engine::update_pendulum() {
+void Engine::updatePendulum() {
     pendulum.update(timePerFrame);
 }
 
@@ -28,10 +29,10 @@ int Engine::getScore() {
     return score;
 }
 
-void Engine::run() {
+void Engine::run(Mode mode) {
     clock.restart();
     timeSinceLastUpdate = sf::Time::Zero;
-    char key = ' ';
+    int key = 0;
 
     while (window.isOpen()) {
         sf::Time dt = clock.restart();
@@ -40,8 +41,8 @@ void Engine::run() {
         while (timeSinceLastUpdate > timePerFrame) {
             timeSinceLastUpdate -= timePerFrame;
 
-            key = input();
-            update_pendulum();
+            key = input(mode);
+            updatePendulum();
 
             checkTipPosition();
             incrementScore();

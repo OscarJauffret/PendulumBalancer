@@ -1,42 +1,51 @@
 //
 // Created by oscar on 02/07/2024.
 //
-#include "../headers/Engine.h"
+#include "./headers/Engine.h"
 
 
-char Engine::input() {
+int Engine::input(Mode mode) {
+    return mode == Mode::Manual ? userInput() : AiInput();
+}
+
+int Engine::userInput() {
     Event event{};
-    bool keyWasPressed = false;
-    char key = ' ';
     while (window.pollEvent(event)) {
-        // Window closed
-        if (event.type == Event::Closed) {
-            window.close();
-        }
-
-        // Keyboard input
-        if (event.type == Event::KeyPressed) {
-            keyWasPressed = true;
-            if (Keyboard::isKeyPressed(Keyboard::Escape)) {
-                window.close();
-            }
-        }
+        handleWindowClosed(event);
     }
 
-    if (sf::Keyboard::isKeyPressed(sf::Keyboard::Escape)) {
-        window.close();
-    } else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Left)) {
-        pendulum.moveLeft();
-        keyWasPressed = true;
-        key = 'L';
-    } else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Right)) {
-        pendulum.moveRight();
-        keyWasPressed = true;
-        key = 'R';
-    }
-
-    if (!keyWasPressed) {
+    int key = handleMovement();
+    if (!key) {
         pendulum.stop();
     }
+
     return key;
+}
+
+int Engine::handleMovement() {
+    int key = 0;
+    if (Keyboard::isKeyPressed(Keyboard::Left)) {
+        pendulum.moveLeft();
+        key = 76;   // ASCII code for 'L'
+    } else if (Keyboard::isKeyPressed(Keyboard::Right)) {
+        pendulum.moveRight();
+        key = 82;   // ASCII code for 'R'
+    }
+    return key;
+}
+
+void Engine::handleWindowClosed(const Event &event) {
+    if (event.type == Event::Closed) {
+        window.close();
+    }
+    // Keyboard input
+    if (event.type == Event::KeyPressed) {
+        if (Keyboard::isKeyPressed(Keyboard::Escape)) {
+            window.close();
+        }
+    }
+}
+
+int Engine::AiInput() {
+    return 0;
 }

@@ -4,8 +4,6 @@
 
 #include "../headers/Pendulum.h"
 
-#define M_PI 3.14159265358979323846
-
 using std::cout; using std::endl;
 
 Pendulum::Pendulum(Vector2f startPosition) {

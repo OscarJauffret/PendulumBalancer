@@ -5,7 +5,7 @@
 #ifndef PENDULUMBALANCERAI_PENDULUM_H
 #define PENDULUMBALANCERAI_PENDULUM_H
 
-#include "../config/configuration.h"
+#include "../../config/configuration.h"
 
 #include <SFML/Graphics.hpp>
 #include <cmath>
