@@ -8,36 +8,49 @@
 #include "../../config/configuration.h"
 
 #include <vector>
+using std::vector;
 
 struct Node {
     int id;
     int layer;
-    float value;
+    double value;
     float bias;
-    Activation activation;
+    ActivationPtr activation;
+
+    Node() : id(-1), layer(-2), value(0.0), bias(0.0), activation(nullptr) {}
 };
 
 struct Connection {
-    float weight;
+    double weight;
     int from;
     int to;
 };
 
 class Genome {
-    std::vector<Node> nodes;
-    std::vector<Connection> connections;
+    vector<Node> nodes;
+    vector<Connection> connections;
     int fitness;
 
 public:
-    Genome(int inputSize, int outputSize, bool randomBiases, bool randomlyWeightedConnections);
+    Genome(int inputSize, bool randomBiases, bool randomlyWeightedConnections);
     int createNode(float bias, Activation activation, int layer);
     void addConnection(float weight, int from, int to);
+
     int getDepth();
-    std::vector<Node> getNodesInLayer(int layer);
-    Node getNode(int id);
-    std::vector<Connection> getConnections();
+    vector<Node> getNodesInLayer(int layer);
+    Node & getNode(int id);
+    vector<Connection> getConnections();
 
     void addWeightedConnections(bool randomWeights);
+
+    double predict(vector<float> inputs);
+
+    float forward();
+
+    void setFitness(int fit);
+    int getFitness();
+
+    static float generateBias(bool randomBiases) ;
 };
 
 #endif //PENDULUMBALANCERAI_GENOME_H

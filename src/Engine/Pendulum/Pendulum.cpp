@@ -43,6 +43,14 @@ void Pendulum::moveRight() {
     }
 }
 
+void Pendulum::setAcceleration(float acceleration) {
+    if (acceleration > 0 && basePosition != trackWidth / 2) {
+        baseAcceleration = acceleration;
+    } else if (acceleration < 0 && basePosition != -(trackWidth / 2)) {
+        baseAcceleration = acceleration;
+    }
+}
+
 void Pendulum::stop() {
     baseAcceleration = 0;
 }

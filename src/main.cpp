@@ -1,25 +1,28 @@
 #include "Engine/headers/Engine.h"
 #include "Network/headers/networkdrawer.h"
 #include "Render/headers/renderer.hpp"
+#include "Network/headers/genetic.h"
 
-void launchGame(Mode mode);
+void launchGame(Mode mode, RenderWindow &window, Time timePerFrame);
 void launchNetwork();
 
 int main() {
-//    config::mode == Mode::Manual ? launchGame() : launchNetwork();
-    renderer r = renderer();
-//    r.askMode() == Mode::Manual ? launchGame(Mode::Manual) : launchNetwork();
-    launchGame(r.askMode());
+    renderer r;
+    launchGame(r.askMode(), r.getWindow(), r.getTimePerFrame());
     return 0;
 }
 
-void launchGame(Mode mode) {
-    Engine engine;
-    engine.run(mode);
+void launchGame(Mode mode, RenderWindow &window, Time timePerFrame) {
+    if (mode == Mode::Manual) {
+        Engine engine(window, timePerFrame, true, mode, Genome(0, false, false));
+        engine.run();
+    } else {
+        Genetic genetic(window, timePerFrame);
+    }
 }
 
 void launchNetwork() {
-    Genome genome(7, 1, false, true);
+    Genome genome(7, false, true);
 //    genome.createNode(0, Activation::Relu, 1, true);
 //    genome.createNode(0, Activation::Relu, 1, true);
 //    genome.createNode(0, Activation::Relu, 2, true);

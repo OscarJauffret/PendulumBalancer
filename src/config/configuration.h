@@ -23,10 +23,10 @@ enum class Mode {
 namespace config {
 
     namespace window {
-        constexpr int width = 1920;
-        constexpr int height = 1080;
+        constexpr int width = 800;
+        constexpr int height = 600;
         constexpr int fps = 60;
-        constexpr unsigned int style = sf::Style::Fullscreen;
+        constexpr unsigned int style = sf::Style::Default;
         const string title = "Pendulum Balancer AI";
     }
 
@@ -56,6 +56,11 @@ namespace config {
             constexpr float trackHeight = 5.0f;
             constexpr float trackOutlineThickness = 2.0f;
         }
+    }
+
+    namespace score {
+        constexpr int timeLimit = 100;
+        constexpr float lengthThreshold = 0.8f;
     }
 
     namespace colors {
@@ -94,12 +99,11 @@ namespace config {
 
     namespace net {
         constexpr int inputSize = 6;
-        constexpr int outputSize = 1;
     }
 
     namespace genetic {
-        constexpr int populationSize = 100;
-        constexpr int batchSize = 10;
+        constexpr int populationSize = 1;
+        constexpr int batchSize = 1;
         constexpr float connectionMutationRate = 0.05f;
     }
 }

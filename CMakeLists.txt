@@ -13,7 +13,7 @@ add_executable(PendulumBalancerAI src/main.cpp
         src/Engine/draw.cpp
         src/Engine/input.cpp
         src/config/configuration.h
-        src/Engine/Pendulum/pendulum_shape.cpp
+        src/Engine/Pendulum/pendulumshape.cpp
         src/Network/headers/genome.h
         src/Network/headers/activation.hpp
         src/Network/Genome.cpp

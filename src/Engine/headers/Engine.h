@@ -7,6 +7,7 @@
 
 #include "Pendulum.h"
 #include "../../config/configuration.h"
+#include "../../Network/headers/genetic.h"
 
 #include <SFML/Graphics.hpp>
 #include <SFML/Graphics/RectangleShape.hpp>
@@ -16,28 +17,31 @@ using namespace std;
 
 class Engine {
 private:
-    Vector2f resolution;
-    RenderWindow window;
-    const unsigned int FPS = config::window::fps;
-    static const Time timePerFrame;
+    RenderWindow& window;
+    Time timePerFrame;
+
+    Mode mode;
+    Genome controllingAgent;
 
     float yThreshold;
-    const float lengthThreshold = 0.8f;
+    const float lengthThreshold = config::score::lengthThreshold;
     float timeAboveThreshold = 0;
+
     int score;
+    int maxPossibleScore = 0;
 
     Pendulum pendulum;
+    bool shouldRenderPendulum;
 
-    sf::Clock clock;
-    sf::Time timeSinceLastUpdate;
+    Clock clock;
+    Time timeSinceLastUpdate;
 
-    sf::Font font;
+    Font font;
 
 public:
-    Engine();
-    void resetGame();
+    Engine(RenderWindow &window, Time timePerFrame, bool shouldRenderPendulum, Mode mode, Genome controllingAgent);
 
-    int input(Mode mode);
+    int input();
     int userInput();
     int AiInput();
 
@@ -45,7 +49,7 @@ public:
     void draw_inputs(int key);
     void draw_score();
     void draw_threshold();
-    void run(Mode mode);
+    int run();
 
     void updatePendulum();
     int getScore();

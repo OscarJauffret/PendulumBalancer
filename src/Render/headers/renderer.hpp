@@ -24,6 +24,8 @@ public:
     Mode askMode();
     Button createModeButton(bool isManualButton);
 
+    RenderWindow& getWindow();
+    Time getTimePerFrame();
 
 };
 

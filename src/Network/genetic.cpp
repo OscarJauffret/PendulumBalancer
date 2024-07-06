@@ -4,25 +4,31 @@
 
 #include "headers/genetic.h"
 
-void Genetic::geneticAlgorithm() {
+Genetic::Genetic(RenderWindow &window, Time timePerFrame) : window(window), timePerFrame(timePerFrame) {
     initializePopulation(config::genetic::populationSize,
-                                      config::net::inputSize, config::net::outputSize);
+                         config::net::inputSize);
     bool training = true;
-    while (training) {
-        population = selection();
-        for (Genome genome : population) {
-            genome = mutation(genome);
-        }
-    }
+    population = selection();
+//    while (training) {
+//        population = selection();
+//        for (Genome genome: population) {
+//            genome = mutation(genome);
+//        }
+//        return;
+//    }
 }
 
 vector<Genome> Genetic::trainAgents(vector<Genome> genomeBatch) {
-
+    for (Genome &genome: genomeBatch) {
+        Engine engine(window, timePerFrame, true, Mode::Ai, genome);
+        genome.setFitness(engine.run());
+    }
+    return genomeBatch;
 }
 
-void Genetic::initializePopulation(int populationSize, int inputSize, int outputSize) {
+void Genetic::initializePopulation(int populationSize, int inputSize) {
     for (int i = 0; i < populationSize; i++) {
-        population.emplace_back(inputSize, outputSize, true, true);
+        population.emplace_back(inputSize, true, true);
     }
 }
 
@@ -36,13 +42,16 @@ vector<Genome> Genetic::selection() {
             batch.push_back(population[j]);
         }
         batch = trainAgents(batch);
-        for (const Genome& genome : batch) {
+        for (const Genome &genome: batch) {
             newPopulation.push_back(genome);
         }
     }
+    std::sort(newPopulation.begin(), newPopulation.end(), [](Genome& a, Genome& b) -> bool {
+        return a.getFitness() > b.getFitness();
+    });
     return newPopulation;
 }
 
 Genome Genetic::mutation(Genome genome) {
-    return Genome(0, 0, false, false);
+    return Genome(0, false, false);
 }

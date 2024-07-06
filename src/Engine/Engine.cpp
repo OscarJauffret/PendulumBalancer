@@ -4,16 +4,19 @@
 
 #include "./headers/Engine.h"
 #include <filesystem>
+#include <utility>
 
 
-const sf::Time Engine::timePerFrame = sf::seconds(1.f/60.f);
 
-Engine::Engine(): resolution(config::window::width, config::window::height), window(VideoMode(resolution.x, resolution.y), "Pendulum Balancer", Style::Default, sf::ContextSettings(0, 0, 8)),
-          pendulum(Vector2f(window.getSize().x / 2, window.getSize().y / 2)), score(0) {
-    window.setFramerateLimit(FPS);
+Engine::Engine(RenderWindow &window, Time timePerFrame, bool shouldRenderPendulum, Mode mode, Genome controllingAgent)
+        : window(window),
+          pendulum(Vector2f(window.getSize().x / 2, window.getSize().y / 2)),
+          score(0), timePerFrame(timePerFrame), shouldRenderPendulum(shouldRenderPendulum), mode(mode),
+          controllingAgent(std::move(controllingAgent)) {
     yThreshold = pendulum.getTrackPositionY() - pendulum.getPendulumLength() * lengthThreshold;
+
     if (!font.loadFromFile(config::assets::fontPath)) {
-        std::cerr << "Failed to load font" << std::endl;
+        cerr << "Failed to load font" << endl;
     }
 }
 
@@ -21,35 +24,34 @@ void Engine::updatePendulum() {
     pendulum.update(timePerFrame);
 }
 
-void Engine::resetGame() {
-    Engine();
-}
-
 int Engine::getScore() {
     return score;
 }
 
-void Engine::run(Mode mode) {
+int Engine::run() {
     clock.restart();
-    timeSinceLastUpdate = sf::Time::Zero;
+    timeSinceLastUpdate = Time::Zero;
     int key = 0;
 
-    while (window.isOpen()) {
-        sf::Time dt = clock.restart();
+    while (window.isOpen() && maxPossibleScore < config::score::timeLimit * config::window::fps) {
+        Time dt = clock.restart();
         timeSinceLastUpdate += dt;
 
         while (timeSinceLastUpdate > timePerFrame) {
             timeSinceLastUpdate -= timePerFrame;
 
-            key = input(mode);
+            key = input();
             updatePendulum();
 
             checkTipPosition();
             incrementScore();
         }
 
-        draw(key);
+        if (shouldRenderPendulum) {
+            draw(key);
+        }
     }
+    return score;
 }
 
 void Engine::checkTipPosition() {
@@ -65,22 +67,23 @@ void Engine::incrementScore() {
         score++;
         timeAboveThreshold = 0;
     }
+    maxPossibleScore++;
 }
 
 float Engine::getInputValue(int inputId) {
     switch (inputId) {
+        case 0:
+            return pendulum.getPosition() / (config::pendulum::dimensions::trackWidth / 2);    // Normalized position
         case 1:
-            return pendulum.getPosition();
+            return pendulum.getAngleCos();          // Cosine of angle
         case 2:
-            return pendulum.getAngleCos();
+            return pendulum.getAngleSin();          // Sine of angle
         case 3:
-            return pendulum.getAngleSin();
+            return pendulum.getAngularVelocity() / 16;   // Angular velocity
         case 4:
-            return pendulum.getAngularVelocity();
+            return pendulum.getAcceleration() / config::pendulum::acceleration;   // Normalized acceleration
         case 5:
-            return pendulum.getAcceleration();
-        case 6:
-            return pendulum.getVelocity();
+            return pendulum.getVelocity() / 250;
         default:
             return 0.0f;
     }

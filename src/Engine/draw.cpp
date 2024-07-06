@@ -14,15 +14,20 @@ void Engine::draw(int key) {
 
 void Engine::draw_inputs(int key) {
     RectangleShape rectangleInput;
-    rectangleInput.setSize(Vector2f(100, 100));
+    rectangleInput.setSize(Vector2f(150, 100));
     rectangleInput.setFillColor(config::colors::inputRectColor);
     rectangleInput.setPosition(10, 10);
     window.draw(rectangleInput);
 
-    char keyChar = static_cast<char>(key);
+    string input;
+    if (mode == Mode::Manual) {
+        input = static_cast<char>(key);
+    } else {
+        input = std::to_string(key);
+    }
     sf::Text input_text;
     input_text.setFont(font);
-    input_text.setString(keyChar);
+    input_text.setString(input);
     input_text.setCharacterSize(80);
     input_text.setFillColor(Color::Black);
     input_text.setPosition(20, 20);

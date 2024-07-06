@@ -6,17 +6,21 @@
 #define PENDULUMBALANCERAI_GENETIC_H
 #include "../../config/configuration.h"
 #include "genome.h"
+#include "../../Engine/headers/Engine.h"
 #include <vector>
+#include <algorithm>
 
 using std::vector;
 
 class Genetic {
     vector<Genome> population;
+    RenderWindow& window;
+    Time timePerFrame;
 public:
-    void geneticAlgorithm();
+    Genetic(RenderWindow &window, Time timePerFrame);
     vector<Genome> trainAgents(vector<Genome> genomeBatch);
 
-    void initializePopulation(int populationSize, int inputSize, int outputSize);
+    void initializePopulation(int populationSize, int inputSize);
     vector<Genome> selection();
     Genome mutation(Genome genome);
 };

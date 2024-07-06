@@ -4,7 +4,7 @@
 #include "./headers/Engine.h"
 
 
-int Engine::input(Mode mode) {
+int Engine::input() {
     return mode == Mode::Manual ? userInput() : AiInput();
 }
 
@@ -47,5 +47,13 @@ void Engine::handleWindowClosed(const Event &event) {
 }
 
 int Engine::AiInput() {
-    return 0;
+    vector<float> inputs = {};
+    for (int i = 0; i < 6; i++) {
+        inputs.push_back(getInputValue(i));
+    }
+    double accelerationPercentage = controllingAgent.predict(inputs);
+    float acceleration = accelerationPercentage * (int) config::pendulum::acceleration;
+
+    pendulum.setAcceleration(acceleration);
+    return (int) acceleration;
 }

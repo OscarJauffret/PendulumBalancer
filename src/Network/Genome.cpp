@@ -1,29 +1,33 @@
 #include "headers/genome.h"
 
-Genome::Genome(int inputSize, int outputSize, bool randomBiases, bool randomlyWeightedConnections) {
+Genome::Genome(int inputSize, bool randomBiases, bool randomlyWeightedConnections) {
     srand(time(nullptr));
     float bias;
 
     for (int i = 0; i < inputSize; i++) {
-        bias = randomBiases ? (float) rand() / RAND_MAX : 0;
-        createNode(bias, Activation::Relu, 0);
+        bias = generateBias(randomBiases);
+        createNode(bias, Activation::None, 0);
     }
 
-    for (int i = 0; i < outputSize; i++) {
-        bias = randomBiases ? (float) rand() / RAND_MAX : 0;
-        createNode(bias, Activation::Tanh, -1);
-    }
+    bias = generateBias(randomBiases);
+    createNode(bias, Activation::Tanh, -1);
 
     addWeightedConnections(randomlyWeightedConnections);
     fitness = 0;
 }
 
+float Genome::generateBias(bool randomBiases) {
+    float bias = randomBiases ? (float) rand() / RAND_MAX : 0;
+    if (rand() % 2 == 0) {
+        bias = -bias;
+    }
+    return bias;
+}
+
 void Genome::addWeightedConnections(bool randomWeights) {
-    cout << "Nodes in layer 0: " << getNodesInLayer(0).size() << endl;
     for (Node from : getNodesInLayer(0)) {
         for (Node to : getNodesInLayer(-1)) {
             float weight = randomWeights ? (float) rand() / RAND_MAX : 0;
-            cout << "Adding connection from " << from.id << " to " << to.id << " with weight " << weight << endl;
             addConnection(weight, from.id, to.id);
         }
     }
@@ -33,7 +37,7 @@ int Genome::createNode(float bias, Activation activation, int layer) {
     Node node{};
     node.id = (int) nodes.size();
     node.bias = bias;
-    node.activation = activation;
+    node.activation = ActivationFunction::getFunction(activation);
     node.layer = layer;
     nodes.push_back(node);
     return node.id;
@@ -57,13 +61,13 @@ int Genome::getDepth() {
     return maxDepth + 2;    // +1 for output layer, +1 for input layer, because output layer has a layer of -1
 }
 
-std::vector<Node> Genome::getNodesInLayer(int layer) {
+vector<Node> Genome::getNodesInLayer(int layer) {
     if (layer == getDepth() - 1) {
         layer = -1;
     }
 
-    std::vector<Node> layerNodes;
-    for (Node node : nodes) {
+    vector<Node> layerNodes;
+    for (Node& node : nodes) {
         if (node.layer == layer) {
             layerNodes.push_back(node);
         }
@@ -71,6 +75,65 @@ std::vector<Node> Genome::getNodesInLayer(int layer) {
     return layerNodes;
 }
 
-std::vector<Connection> Genome::getConnections() {
+vector<Connection> Genome::getConnections() {
     return connections;
+}
+
+double Genome::predict(vector<float> inputs) {
+    for (int i = 0; i < inputs.size(); i++) {
+        nodes[i].value = inputs[i];
+    }
+    float output = forward();
+    cout << "Returning output: " << output << endl;
+    return output;
+}
+
+float Genome::forward() {
+    for (Node& node : nodes) {
+        if (node.layer == 0) {
+            cout << "Input node " << node.id << " initial value: " << node.value << endl;
+        }
+    }
+
+    int depth = getDepth();
+    for (int i = 0; i < depth; i++) {                                       // Pour chaque couche
+        for (Node& node : nodes) {                                          // Pour chaque nœud
+            if (node.layer == i || (i == depth - 1 && node.layer == -1)) {  // Si le nœud est dans la couche actuelle
+                double sum = 0;
+                for (const Connection& connection : connections) {          // Pour chaque connexion
+                    if (connection.to == node.id) {                         // Si la connexion est vers le nœud actuel
+                        sum += connection.weight * getNode(connection.from).value;
+                    }
+                }
+                node.value = node.activation(sum + node.bias + node.value);              // Appliquer la fonction d'activation et le biais
+            }
+        }
+    }
+    for (const Node& node : nodes) {
+        if (node.layer == -1) {
+//            cout << "Output node id: " << node.id << " Output node layer: " << node.layer << endl;
+//            cout << "Output node value: " << node.value << endl;
+//            cout << "Returning output node value: " << node.value << endl;
+            return node.value;
+        }
+    }
+    return 0.0f; // Valeur de retour par défaut si aucun nœud de sortie n'est trouvé
+}
+
+
+Node & Genome::getNode(int id) {
+    for (Node& node : nodes) {
+        if (node.id == id) {
+            return node;
+        }
+    }
+    throw std::invalid_argument("Node with id " + std::to_string(id) + " not found");
+}
+
+void Genome::setFitness(int fit) {
+    this->fitness = fit;
+}
+
+int Genome::getFitness() {
+    return fitness;
 }

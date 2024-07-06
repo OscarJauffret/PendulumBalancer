@@ -40,6 +40,7 @@ public:
 
     void moveLeft();
     void moveRight();
+    void setAcceleration(float acceleration);
     void stop();
 
     float getTrackPositionY() const;

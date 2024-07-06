@@ -4,6 +4,8 @@
 
 #include "headers/renderer.hpp"
 
+const Time renderer::timePerFrame = seconds(1.f / config::window::fps);
+
 renderer::renderer() : resolution(config::window::width, config::window::height),
                         window(VideoMode(resolution.x, resolution.y),
                                config::window::title, config::window::style,
@@ -18,7 +20,8 @@ Mode renderer::askMode() {
     Button manualButton = createModeButton(true);
     Button aiButton = createModeButton(false);
     Mode mode = Mode::Manual;
-    while (window.isOpen()) {
+    bool chosen = false;
+    while (window.isOpen() && !chosen) {
         sf::Event event;
         while (window.pollEvent(event)) {
             if (event.type == sf::Event::Closed)
@@ -27,10 +30,10 @@ Mode renderer::askMode() {
                 if (event.mouseButton.button == sf::Mouse::Left) {
                     if (manualButton.isMouseOver(window)) {
                         mode = Mode::Manual;
-                        window.close();
+                        chosen = true;
                     } else if (aiButton.isMouseOver(window)) {
                         mode = Mode::Ai;
-                        window.close();
+                        chosen = true;
                     }
                 }
             }
@@ -41,6 +44,8 @@ Mode renderer::askMode() {
         aiButton.draw(window);
         window.display();
     }
+    window.clear(Color::Black);
+    window.display();
     return mode;
 }
 
@@ -55,4 +60,12 @@ Button renderer::createModeButton(bool isManualButton) {
     string text = isManualButton ? "Manual" : "AI";
 
     return Button(buttonX, buttonY, buttonWidth, buttonHeight, text, font);
+}
+
+RenderWindow& renderer::getWindow() {
+    return window;
+}
+
+Time renderer::getTimePerFrame() {
+    return timePerFrame;
 }
