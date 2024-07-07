@@ -6,6 +6,7 @@
 #define PENDULUMBALANCERAI_PENDULUM_H
 
 #include "../../config/configuration.h"
+#include "../../Render/headers/pendulumrenderer.hpp"
 
 #include <SFML/Graphics.hpp>
 #include <cmath>
@@ -30,30 +31,27 @@ class Pendulum {
     float angularVelocity;
     float angularAcceleration;
 
-    RectangleShape bar;
-    CircleShape tipBall;
-    CircleShape baseBall;
-    RectangleShape track;
+    Vector2f barPosition;
+    Vector2f tipBallPosition;
+
+    PendulumRenderer renderer;
 
 public:
-    explicit Pendulum(Vector2f startPosition);
+    explicit Pendulum(RenderWindow &window, float yThreshold, Vector2f startPosition);
 
     void moveLeft();
     void moveRight();
     void setAcceleration(float acceleration);
     void stop();
 
-    float getTrackPositionY() const;
-
     void update(Time timePerFrame);
     void applyGravity(const Time &timePerFrame);
     void checkCollision();
     void updatePosition(const Time &timePerFrame);
 
-    void draw(RenderWindow& window);
+    void draw(int fitness, int keyPressed, Mode mode);
 
     float getTipY() const;
-    float getPendulumLength() const;
 
     float getPosition() const;
     float getAngularVelocity() const;
@@ -61,13 +59,6 @@ public:
     float getAngleSin() const;
     float getAcceleration() const;
     float getVelocity() const;
-
-    void initializeShape(const Vector2f &startPosition);
-    void initializeBar();
-    void initializeBall(CircleShape& ball, float radius, Color color, float outlineThickness, Color outlineColor, float positionX, float positionY);
-    void initializeTrack(const Vector2f &startPosition);
-
-    void initializeBalls();
 };
 
 

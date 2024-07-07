@@ -6,7 +6,8 @@
 
 using std::cout; using std::endl;
 
-Pendulum::Pendulum(Vector2f startPosition) {
+Pendulum::Pendulum(RenderWindow &window, float yThreshold, Vector2f startPosition) : renderer(window, yThreshold,
+                                                                                              startPosition, true) {
     length = config::pendulum::dimensions::length;
     angle = config::pendulum::startAngle;
 
@@ -21,13 +22,6 @@ Pendulum::Pendulum(Vector2f startPosition) {
     basePosition = config::pendulum::startPosition;
     baseVelocity = config::pendulum::startVelocity;
     baseAcceleration = config::pendulum::startAcceleration;
-
-    initializeShape(startPosition);
-
-}
-
-float Pendulum::getTrackPositionY() const {
-    return trackPosition.y;
 
 }
 
@@ -59,12 +53,9 @@ void Pendulum::update(Time timePerFrame) {
     applyGravity(timePerFrame);
     updatePosition(timePerFrame);
 
-    // Mettre à jour les positions des composants du pendule
-    bar.setRotation(-angle * 180 / M_PI);
-    bar.setPosition(Vector2f(trackPosition.x + basePosition, trackPosition.y));
-    baseBall.setPosition(bar.getPosition().x, bar.getPosition().y);
-    tipBall.setPosition(baseBall.getPosition().x + length * sin(angle),
-                        baseBall.getPosition().y + length * cos(angle));
+    // Mettre à jour les positions des composants du pendule*
+    barPosition = Vector2f(trackPosition.x + basePosition, trackPosition.y);
+    tipBallPosition = Vector2f(barPosition.x + length * sin(angle), barPosition.y + length * cos(angle));
 }
 
 void Pendulum::applyGravity(const Time &timePerFrame) {
@@ -92,19 +83,12 @@ void Pendulum::checkCollision() {
     }
 }
 
-void Pendulum::draw(RenderWindow& window) {
-    window.draw(track);
-    window.draw(bar);
-    window.draw(tipBall);
-    window.draw(baseBall);
+void Pendulum::draw(int fitness, int keyPressed, Mode mode) {
+    renderer.draw(barPosition, (float) angle, tipBallPosition, fitness, keyPressed, mode);
 }
 
 float Pendulum::getTipY() const {
-    return tipBall.getPosition().y;
-}
-
-float Pendulum::getPendulumLength() const {
-    return length;
+    return tipBallPosition.y;
 }
 
 float Pendulum::getPosition() const {

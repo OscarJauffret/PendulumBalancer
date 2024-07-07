@@ -3,42 +3,43 @@
 //
 
 #include "headers/pendulumrenderer.hpp"
+#include "headers/shapeinitializer.hpp"
 
-PendulumRenderer::PendulumRenderer(RenderWindow &window, float yThreshold, Vector2f startPosition)
-        : window(window), yThreshold(yThreshold), startPosition(startPosition) {
+PendulumRenderer::PendulumRenderer(RenderWindow &window, float yThreshold, Vector2f startPosition,
+                                   bool render)
+        : window(window), yThreshold(yThreshold), startPosition(startPosition), render(render) {
     if (!font.loadFromFile(config::assets::fontPath)) {
         cerr << "Failed to load font" << endl;
     }
+    shapeInitializer = ShapeInitializer(yThreshold, startPosition);
+    shapeInitializer.initializeShapes(baseBall, tipBall, track, threshold, bar);
+
 }
 
-void PendulumRenderer::draw(float trackPositionY, float tipY, float angle, float pendulumLength) {
+void PendulumRenderer::draw(Vector2f barPosition, float angle, Vector2f tipBallPosition, int fitness, int keyPressed,
+                            Mode mode) {
+    if (!render) {
+        return;
+    }
     window.clear(config::colors::pendulum::backgroundColor);
-    drawTrack();
-    draw_threshold();
-    drawPendulum(tipY, trackPositionY, angle, pendulumLength);
-    draw_score(0);
-    draw_inputs(0, Mode::Manual);
+    window.draw(track);
+    window.draw(threshold);
+    drawPendulum(barPosition, angle, tipBallPosition);
+    draw_score(fitness);
+    draw_inputs(keyPressed, mode);
     window.display();
 }
 
-void PendulumRenderer::drawTrack() {
-    sf::RectangleShape track;
-    Vector2f tSize = Vector2f(config::pendulum::dimensions::trackWidth , config::pendulum::dimensions::trackHeight);
-    track.setSize(tSize);
-    track.setFillColor(config::colors::pendulum::trackOutlineColor);
-    track.setOrigin(Vector2f(tSize.x / 2, tSize.y / 2));
-    track.setPosition(startPosition);
-    window.draw(track);
-}
+void PendulumRenderer::drawPendulum(Vector2f barPosition, float angle, Vector2f tipBallPosition) {
+    bar.setPosition(barPosition);
+    bar.setRotation(-(float) angle * 180 / M_PI);
+    window.draw(bar);
 
-void PendulumRenderer::draw_threshold() {
-    sf::RectangleShape threshold;
-    Vector2f tSize = Vector2f(config::pendulum::dimensions::trackWidth , config::pendulum::dimensions::trackHeight);
-    threshold.setSize(tSize);
-    threshold.setFillColor(config::colors::pendulum::thresholdColor);
-    threshold.setOrigin(Vector2f(tSize.x / 2, tSize.y / 2));
-    threshold.setPosition(config::window::width / 2, yThreshold);
-    window.draw(threshold);
+    baseBall.setPosition(barPosition);
+    window.draw(baseBall);
+
+    tipBall.setPosition(tipBallPosition);
+    window.draw(tipBall);
 }
 
 void PendulumRenderer::draw_score(int fitness) {
@@ -72,3 +73,4 @@ void PendulumRenderer::draw_inputs(int key, Mode mode) {
     input_text.setPosition(20, 20);
     window.draw(input_text);
 }
+

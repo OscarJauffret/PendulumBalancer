@@ -11,11 +11,10 @@
 Engine::Engine(RenderWindow &window, Time timePerFrame, bool shouldRenderPendulum, Mode mode,
                Genome controllingAgent, int &fitness)
         : window(window),
-          pendulum(Vector2f(config::window::width / 2, config::window::height / 2)),
+          yThreshold((config::window::height / 2) - (config::pendulum::dimensions::length * config::score::lengthThreshold)),
+          pendulum(window, yThreshold, Vector2f(config::window::width / 2, config::window::height / 2)),
           fitness(fitness), timePerFrame(timePerFrame), shouldRenderPendulum(shouldRenderPendulum), mode(mode),
           controllingAgent(std::move(controllingAgent)) {
-    yThreshold = pendulum.getTrackPositionY() - pendulum.getPendulumLength() * lengthThreshold;
-
     if (!font.loadFromFile(config::assets::fontPath)) {
         cerr << "Failed to load font" << endl;
     }
@@ -49,7 +48,7 @@ int Engine::run() {
         }
 
         if (shouldRenderPendulum) {
-            draw(key);
+            pendulum.draw(fitness, key, mode);
         }
     }
     return fitness;

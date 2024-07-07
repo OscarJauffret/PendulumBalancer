@@ -24,7 +24,6 @@ private:
     Genome controllingAgent;
 
     float yThreshold;
-    const float lengthThreshold = config::score::lengthThreshold;
     float timeAboveThreshold = 0;
 
     int& fitness;
@@ -46,10 +45,6 @@ public:
     int userInput();
     int AiInput();
 
-    void draw(int key);
-    void draw_inputs(int key);
-    void draw_score();
-    void draw_threshold();
     int run();
 
     void updatePendulum();
