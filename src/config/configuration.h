@@ -102,8 +102,8 @@ namespace config {
     }
 
     namespace genetic {
-        constexpr int populationSize = 1;
-        constexpr int batchSize = 1;
+        constexpr int populationSize = 100;
+        constexpr int batchSize = 10;
         constexpr float connectionMutationRate = 0.05f;
     }
 }

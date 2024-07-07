@@ -19,11 +19,28 @@ Genetic::Genetic(RenderWindow &window, Time timePerFrame) : window(window), time
 }
 
 vector<Genome> Genetic::trainAgents(vector<Genome> genomeBatch) {
+    bool shouldRender = true;
+    vector<thread> threads;
+
     for (Genome &genome: genomeBatch) {
-        Engine engine(window, timePerFrame, true, Mode::Ai, genome);
-        genome.setFitness(engine.run());
+        cout << "Training agent with render: " << shouldRender << endl;
+        threads.emplace_back([shouldRender, &genome, this]() mutable {
+            int fitness = 0;
+            trainAgent(genome, shouldRender, fitness);
+            genome.setFitness(fitness);
+        });
+        shouldRender = false;
+    }
+
+    for (thread &t: threads) {
+        t.join();
     }
     return genomeBatch;
+}
+
+void Genetic::trainAgent(Genome genome, bool shouldRender, int &fitness) {
+    Engine engine(window, timePerFrame, shouldRender, Mode::Ai, genome, fitness);
+    engine.run();
 }
 
 void Genetic::initializePopulation(int populationSize, int inputSize) {

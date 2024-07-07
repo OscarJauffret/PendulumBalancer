@@ -37,7 +37,7 @@ void Engine::draw_inputs(int key) {
 void Engine::draw_score() {
     sf::Text score_text;
     score_text.setFont(font);
-    score_text.setString("Score: " + std::to_string(score));
+    score_text.setString("Score: " + std::to_string(fitness));
     score_text.setCharacterSize(30);
     score_text.setFillColor(Color::White);
     score_text.setPosition(window.getSize().x / 2 - 100, 10);

@@ -8,10 +8,11 @@
 
 
 
-Engine::Engine(RenderWindow &window, Time timePerFrame, bool shouldRenderPendulum, Mode mode, Genome controllingAgent)
+Engine::Engine(RenderWindow &window, Time timePerFrame, bool shouldRenderPendulum, Mode mode,
+               Genome controllingAgent, int &fitness)
         : window(window),
-          pendulum(Vector2f(window.getSize().x / 2, window.getSize().y / 2)),
-          score(0), timePerFrame(timePerFrame), shouldRenderPendulum(shouldRenderPendulum), mode(mode),
+          pendulum(Vector2f(config::window::width / 2, config::window::height / 2)),
+          fitness(fitness), timePerFrame(timePerFrame), shouldRenderPendulum(shouldRenderPendulum), mode(mode),
           controllingAgent(std::move(controllingAgent)) {
     yThreshold = pendulum.getTrackPositionY() - pendulum.getPendulumLength() * lengthThreshold;
 
@@ -25,7 +26,7 @@ void Engine::updatePendulum() {
 }
 
 int Engine::getScore() {
-    return score;
+    return fitness;
 }
 
 int Engine::run() {
@@ -51,7 +52,7 @@ int Engine::run() {
             draw(key);
         }
     }
-    return score;
+    return fitness;
 }
 
 void Engine::checkTipPosition() {
@@ -64,7 +65,7 @@ void Engine::checkTipPosition() {
 
 void Engine::incrementScore() {
     if (timeAboveThreshold > 1) {
-        score++;
+        fitness++;
         timeAboveThreshold = 0;
     }
     maxPossibleScore++;

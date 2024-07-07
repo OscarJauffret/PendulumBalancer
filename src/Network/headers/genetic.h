@@ -9,6 +9,8 @@
 #include "../../Engine/headers/Engine.h"
 #include <vector>
 #include <algorithm>
+#include <thread>
+#include <future>
 
 using std::vector;
 
@@ -19,6 +21,7 @@ class Genetic {
 public:
     Genetic(RenderWindow &window, Time timePerFrame);
     vector<Genome> trainAgents(vector<Genome> genomeBatch);
+    void trainAgent(Genome genome, bool shouldRender, int &fitness);
 
     void initializePopulation(int populationSize, int inputSize);
     vector<Genome> selection();

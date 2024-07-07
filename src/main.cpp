@@ -14,7 +14,8 @@ int main() {
 
 void launchGame(Mode mode, RenderWindow &window, Time timePerFrame) {
     if (mode == Mode::Manual) {
-        Engine engine(window, timePerFrame, true, mode, Genome(0, false, false));
+        int fitness = 0;
+        Engine engine(window, timePerFrame, true, mode, Genome(0, false, false), fitness);
         engine.run();
     } else {
         Genetic genetic(window, timePerFrame);

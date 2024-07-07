@@ -27,7 +27,7 @@ private:
     const float lengthThreshold = config::score::lengthThreshold;
     float timeAboveThreshold = 0;
 
-    int score;
+    int& fitness;
     int maxPossibleScore = 0;
 
     Pendulum pendulum;
@@ -39,7 +39,8 @@ private:
     Font font;
 
 public:
-    Engine(RenderWindow &window, Time timePerFrame, bool shouldRenderPendulum, Mode mode, Genome controllingAgent);
+    Engine(RenderWindow &window, Time timePerFrame, bool shouldRenderPendulum, Mode mode,
+           Genome controllingAgent, int &fitness);
 
     int input();
     int userInput();
