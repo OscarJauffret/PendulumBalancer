@@ -2,16 +2,20 @@
 
 #include "headers/networkdrawer.h"
 
-NetworkDrawer::NetworkDrawer(Genome genome) : genome(std::move(genome)) {}
+NetworkDrawer::NetworkDrawer(Genome &genome) : genome(genome) {}
 
 void NetworkDrawer::draw(sf::RenderWindow &window) {
-    window.clear(config::colors::pendulum::backgroundColor);
-    calculateNodesPositions(window);
+    window.clear(config::colors::backgroundColor);
+    calculateNodesPositions();
     drawConnections(window);
     drawNodes(window);
 }
 
-void NetworkDrawer::calculateNodesPositions(sf::RenderWindow &window) {
+void NetworkDrawer::setGenome(const Genome &gen) {
+    NetworkDrawer::genome = gen;
+}
+
+void NetworkDrawer::calculateNodesPositions() {
     int depth = genome.getDepth();
     float xSpacing = (float) config::window::width / (float) (depth + 1);
     for (int i = 0; i < depth; i++) {
@@ -64,4 +68,5 @@ sf::RectangleShape NetworkDrawer::drawConnection(sf::Vector2f from, sf::Vector2f
 
     return connection;
 }
+
 

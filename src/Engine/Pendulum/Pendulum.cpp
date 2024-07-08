@@ -6,8 +6,8 @@
 
 using std::cout; using std::endl;
 
-Pendulum::Pendulum(RenderWindow &window, float yThreshold, Vector2f startPosition) : renderer(window, yThreshold,
-                                                                                              startPosition, true) {
+Pendulum::Pendulum(RenderWindow &window, float yThreshold, Vector2f startPosition, bool render) : renderer(window, yThreshold,
+                                                                                                           startPosition, render) {
     length = config::pendulum::dimensions::length;
     angle = config::pendulum::startAngle;
 

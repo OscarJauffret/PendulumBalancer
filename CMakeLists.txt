@@ -25,7 +25,11 @@ add_executable(PendulumBalancerAI src/main.cpp
         src/Render/headers/button.hpp
         src/Render/pendulumrenderer.cpp
         src/Render/headers/pendulumrenderer.hpp
-        src/Render/shapeinitializer.cpp)
+        src/Render/shapeinitializer.cpp
+        src/Network/randomnumbergenerator.cpp
+        src/Network/headers/randomnumbergenerator.hpp
+        src/Network/mutator.cpp
+        src/Network/headers/mutator.hpp)
 
 set(CMAKE_PREFIX_PATH "C:/SFML-2.6.1")
 find_package(SFML 2.6 COMPONENTS graphics window system REQUIRED)

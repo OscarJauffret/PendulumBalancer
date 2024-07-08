@@ -16,11 +16,12 @@ class NetworkDrawer {
     map<int, Vector2f> nodesPositions;
 
 public:
-    explicit NetworkDrawer(Genome genome);
+    explicit NetworkDrawer(Genome &genome);
 
     void draw(sf::RenderWindow& window);
+    void setGenome(const Genome &gen);
 
-    void calculateNodesPositions(sf::RenderWindow &window);
+    void calculateNodesPositions();
     void drawNodes(sf::RenderWindow &window);
     static void drawNode(sf::RenderWindow &window, float xPos, float yPos);
 

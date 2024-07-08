@@ -39,7 +39,7 @@ Mode renderer::askMode() {
             }
         }
 
-        window.clear();
+        window.clear(config::colors::backgroundColor);
         manualButton.draw(window);
         aiButton.draw(window);
         window.display();
@@ -50,7 +50,7 @@ Mode renderer::askMode() {
 }
 
 Button renderer::createModeButton(bool isManualButton) {
-    float buttonHeight = 300;
+    float buttonHeight = 200;
     float buttonWidth = buttonHeight * M_PHI;
     float buttonX = resolution.x / 2 - 5;
     if (isManualButton) {

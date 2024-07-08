@@ -12,8 +12,8 @@ Engine::Engine(RenderWindow &window, Time timePerFrame, bool shouldRenderPendulu
                Genome controllingAgent, int &fitness)
         : window(window),
           yThreshold((config::window::height / 2) - (config::pendulum::dimensions::length * config::score::lengthThreshold)),
-          pendulum(window, yThreshold, Vector2f(config::window::width / 2, config::window::height / 2)),
-          fitness(fitness), timePerFrame(timePerFrame), shouldRenderPendulum(shouldRenderPendulum), mode(mode),
+          pendulum(window, yThreshold, Vector2f(config::window::width / 2, config::window::height / 2), shouldRenderPendulum),
+          fitness(fitness), timePerFrame(timePerFrame), mode(mode),
           controllingAgent(std::move(controllingAgent)) {
     if (!font.loadFromFile(config::assets::fontPath)) {
         cerr << "Failed to load font" << endl;
@@ -47,9 +47,7 @@ int Engine::run() {
             incrementScore();
         }
 
-        if (shouldRenderPendulum) {
-            pendulum.draw(fitness, key, mode);
-        }
+        pendulum.draw(fitness, key, mode);
     }
     return fitness;
 }
@@ -63,7 +61,7 @@ void Engine::checkTipPosition() {
 }
 
 void Engine::incrementScore() {
-    if (timeAboveThreshold > 1) {
+    if (timeAboveThreshold > config::score::timeAboveThresholdToScore) {
         fitness++;
         timeAboveThreshold = 0;
     }

@@ -21,7 +21,7 @@ void PendulumRenderer::draw(Vector2f barPosition, float angle, Vector2f tipBallP
     if (!render) {
         return;
     }
-    window.clear(config::colors::pendulum::backgroundColor);
+    window.clear(config::colors::backgroundColor);
     window.draw(track);
     window.draw(threshold);
     drawPendulum(barPosition, angle, tipBallPosition);

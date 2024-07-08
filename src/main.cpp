@@ -8,7 +8,8 @@ void launchNetwork();
 
 int main() {
     renderer r;
-    launchGame(r.askMode(), r.getWindow(), r.getTimePerFrame());
+//    launchGame(r.askMode(), r.getWindow(), r.getTimePerFrame());
+    launchNetwork();
     return 0;
 }
 
@@ -23,16 +24,15 @@ void launchGame(Mode mode, RenderWindow &window, Time timePerFrame) {
 }
 
 void launchNetwork() {
-    Genome genome(7, false, true);
+    Genome genome(6, true, true);
 //    genome.createNode(0, Activation::Relu, 1, true);
 //    genome.createNode(0, Activation::Relu, 1, true);
 //    genome.createNode(0, Activation::Relu, 2, true);
     NetworkDrawer drawer(genome);
+
     RenderWindow window(VideoMode(config::window::width, config::window::height), config::window::title,
                         config::window::style, ContextSettings(0, 0, 8));
     window.setFramerateLimit(config::window::fps);
-    drawer.draw(window);
-    window.display();
 
     while (window.isOpen()) {
         Event event;
@@ -40,6 +40,14 @@ void launchNetwork() {
             if (event.type == Event::Closed) {
                 window.close();
             }
+            if (event.type == Event::KeyPressed) {
+                if (event.key.code == Keyboard::Space) {
+                    Mutator::changeWeightMutation(genome);
+                    drawer.setGenome(genome);
+                }
+            }
         }
+        drawer.draw(window);
+        window.display();
     }
 }

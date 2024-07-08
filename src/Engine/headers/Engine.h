@@ -30,7 +30,6 @@ private:
     int maxPossibleScore = 0;
 
     Pendulum pendulum;
-    bool shouldRenderPendulum;
 
     Clock clock;
     Time timeSinceLastUpdate;

@@ -60,18 +60,19 @@ namespace config {
 
     namespace score {
         constexpr int timeLimit = 100;
-        constexpr float lengthThreshold = 0.8f;
+        constexpr float lengthThreshold = 0.0f;
+        constexpr float timeAboveThresholdToScore = 0.05f;
     }
 
     namespace colors {
         const Color inputRectColor = Color(80, 80, 80);
+        const Color backgroundColor = Color(51, 56, 61);
 
         namespace pendulum {
-            const Color backgroundColor = Color(0, 0, 0);
             const Color barColor = Color(255, 255, 255);
             const Color ballColor = Color(208, 100, 75);
             const Color ballOutlineColor = Color(255, 255, 255);
-            const Color trackFillColor = Color(0, 0, 0);
+            const Color trackFillColor = Color::Transparent;
             const Color trackOutlineColor = Color(255, 255, 255);
             [[maybe_unused]] const Color thresholdColor = Color(80, 80, 80);
         }
@@ -84,6 +85,7 @@ namespace config {
 
         namespace buttons {
             const Color normal = Color(66, 108, 245);
+            const Color outline = Color(255, 255, 255);
         }
     }
 
@@ -104,6 +106,8 @@ namespace config {
     namespace genetic {
         constexpr int populationSize = 100;
         constexpr int batchSize = 10;
+        constexpr int numberOfMutations = 4;
+        constexpr float elitismRate = 0.25f;
         constexpr float connectionMutationRate = 0.05f;
     }
 }

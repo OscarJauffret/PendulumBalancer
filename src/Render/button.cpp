@@ -8,6 +8,8 @@ Button::Button(float x, float y, float width, float height, const std::string& t
     buttonShape.setPosition(x, y);
     buttonShape.setSize(sf::Vector2f(width, height));
     buttonShape.setFillColor(config::colors::buttons::normal);
+    buttonShape.setOutlineThickness(2);
+    buttonShape.setOutlineColor(config::colors::buttons::outline);
 
     buttonText.setFont(font);
     buttonText.setString(text);

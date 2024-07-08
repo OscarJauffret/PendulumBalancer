@@ -37,7 +37,7 @@ class Pendulum {
     PendulumRenderer renderer;
 
 public:
-    explicit Pendulum(RenderWindow &window, float yThreshold, Vector2f startPosition);
+    explicit Pendulum(RenderWindow &window, float yThreshold, Vector2f startPosition, bool render);
 
     void moveLeft();
     void moveRight();

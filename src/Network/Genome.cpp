@@ -1,36 +1,18 @@
 #include "headers/genome.h"
 
 Genome::Genome(int inputSize, bool randomBiases, bool randomlyWeightedConnections) {
-    srand(time(nullptr));
     float bias;
 
     for (int i = 0; i < inputSize; i++) {
-        bias = generateBias(randomBiases);
+        bias = RNG::randomFloatBetweenMinus1And1(randomBiases);
         createNode(bias, Activation::None, 0);
     }
 
-    bias = generateBias(randomBiases);
+    bias = RNG::randomFloatBetweenMinus1And1(randomBiases);
     createNode(bias, Activation::Tanh, -1);
 
     addWeightedConnections(randomlyWeightedConnections);
     fitness = 0;
-}
-
-float Genome::generateBias(bool randomBiases) {
-    float bias = randomBiases ? (float) rand() / RAND_MAX : 0;
-    if (rand() % 2 == 0) {
-        bias = -bias;
-    }
-    return bias;
-}
-
-void Genome::addWeightedConnections(bool randomWeights) {
-    for (Node from : getNodesInLayer(0)) {
-        for (Node to : getNodesInLayer(-1)) {
-            float weight = randomWeights ? (float) rand() / RAND_MAX : 0;
-            addConnection(weight, from.id, to.id);
-        }
-    }
 }
 
 int Genome::createNode(float bias, Activation activation, int layer) {
@@ -51,6 +33,57 @@ void Genome::addConnection(float weight, int from, int to) {
     connections.push_back(connection);
 }
 
+void Genome::linkNodeToAdjacentLayers(int nodeId, int layer) {
+    if (layer == 0 || layer == getDepth() - 1) {
+        throw std::invalid_argument("Cannot link node to adjacent layers in input or output layer");
+    }
+    vector<Node> nodesInLayer = getNodesInLayer(layer);
+    vector<Node> nodesInPreviousLayer = getNodesInLayer(layer - 1);
+    int randomIndex = RNG::randomIntBetween(0, (int) nodesInPreviousLayer.size() - 1);
+    addConnection(RNG::randomFloatBetweenMinus1And1(true), nodesInPreviousLayer[randomIndex].id, nodeId);
+    int nextLayer = layer + 1;
+    if (nextLayer == getDepth() - 1) {
+        nextLayer = -1;
+    }
+    vector<Node> nodesInNextLayer = getNodesInLayer(nextLayer);
+    randomIndex = RNG::randomIntBetween(0, (int) nodesInNextLayer.size() - 1);
+    addConnection(RNG::randomFloatBetweenMinus1And1(true), nodeId, nodesInNextLayer[randomIndex].id);
+}
+
+int Genome::checkIfLayerIsLast(int layer) {
+    if (layer == - 1) {
+        return getDepth() - 1;
+    }
+    return layer;
+}
+
+bool Genome::checkIfRoomForNode(int fromLayer, int toLayer) {
+    if (fromLayer == toLayer) {
+        return false;
+    }
+    if (fromLayer + 1 == toLayer) {
+        return false;
+    }
+    return true;
+}
+
+void Genome::updateLayersAfter(int layer) {
+    for (Node& node : nodes) {
+        if (node.layer >= layer) {
+            node.layer++;
+        }
+    }
+}
+
+void Genome::removeConnection(int from, int to) {
+    for (int i = 0; i < connections.size(); i++) {
+        if (connections[i].from == from && connections[i].to == to) {
+            connections.erase(connections.begin() + i);
+            return;
+        }
+    }
+}
+
 int Genome::getDepth() {
     int maxDepth = 0;
     for (Node node : nodes) {
@@ -65,7 +98,6 @@ vector<Node> Genome::getNodesInLayer(int layer) {
     if (layer == getDepth() - 1) {
         layer = -1;
     }
-
     vector<Node> layerNodes;
     for (Node& node : nodes) {
         if (node.layer == layer) {
@@ -75,8 +107,27 @@ vector<Node> Genome::getNodesInLayer(int layer) {
     return layerNodes;
 }
 
+void Genome::addWeightedConnections(bool randomWeights) {
+    for (Node from : getNodesInLayer(0)) {
+        for (Node to : getNodesInLayer(-1)) {
+            float weight = RNG::randomFloatBetweenMinus1And1(randomWeights);
+            addConnection(weight, from.id, to.id);
+        }
+    }
+}
+
 vector<Connection> Genome::getConnections() {
     return connections;
+}
+
+vector<Node> Genome::getNodesExceptLayer(int layer) {
+    vector<Node> n;
+    for (Node& node : nodes) {
+        if (node.layer != layer) {
+            n.push_back(node);
+        }
+    }
+    return n;
 }
 
 double Genome::predict(vector<float> inputs) {
@@ -84,17 +135,10 @@ double Genome::predict(vector<float> inputs) {
         nodes[i].value = inputs[i];
     }
     float output = forward();
-    cout << "Returning output: " << output << endl;
     return output;
 }
 
 float Genome::forward() {
-    for (Node& node : nodes) {
-        if (node.layer == 0) {
-            cout << "Input node " << node.id << " initial value: " << node.value << endl;
-        }
-    }
-
     int depth = getDepth();
     for (int i = 0; i < depth; i++) {                                       // Pour chaque couche
         for (Node& node : nodes) {                                          // Pour chaque nœud
@@ -111,9 +155,6 @@ float Genome::forward() {
     }
     for (const Node& node : nodes) {
         if (node.layer == -1) {
-//            cout << "Output node id: " << node.id << " Output node layer: " << node.layer << endl;
-//            cout << "Output node value: " << node.value << endl;
-//            cout << "Returning output node value: " << node.value << endl;
             return node.value;
         }
     }
@@ -136,4 +177,8 @@ void Genome::setFitness(int fit) {
 
 int Genome::getFitness() {
     return fitness;
+}
+
+void Genome::setConnectionWeight(int index, float weight) {
+    connections[index].weight = weight;
 }

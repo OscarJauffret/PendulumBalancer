@@ -6,7 +6,9 @@
 #define PENDULUMBALANCERAI_GENETIC_H
 #include "../../config/configuration.h"
 #include "genome.h"
+#include "mutator.hpp"
 #include "../../Engine/headers/Engine.h"
+#include "networkdrawer.h"
 #include <vector>
 #include <algorithm>
 #include <thread>
@@ -25,7 +27,12 @@ public:
 
     void initializePopulation(int populationSize, int inputSize);
     vector<Genome> selection();
-    Genome mutation(Genome genome);
+    static Genome mutation(Genome &genome);
+
+    vector<Genome> initializeNewPopulationWithElites();
+    int calculateTotalFitness();
+    int tournamentSelection();
+
 };
 
 
