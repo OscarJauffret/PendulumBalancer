@@ -30,6 +30,25 @@ namespace config {
         const string title = "Pendulum Balancer AI";
     }
 
+    namespace layout {
+        namespace net {
+            constexpr float originX = 100.0f;
+            constexpr float originY = 0.0f;
+            constexpr float width = window::width - 2 * originX;
+            constexpr float height = 300.0f;
+        }
+
+        namespace score {
+            constexpr float originX = 250.0f;
+            constexpr float originY = net::height + 10.0f;
+            constexpr float width = window::width - 2 * originX;
+            constexpr float height = window::height - originY - 10.0f;
+            constexpr float barWidth = 10.0f;
+            constexpr float spaceBetweenBars = 5.0f;
+            constexpr float bgOutlineThickness = 2.0f;
+        }
+    }
+
     namespace physics {
         constexpr float gravity = 400.0f;
         constexpr float damping = 20.0f;
@@ -59,14 +78,12 @@ namespace config {
     }
 
     namespace score {
-        constexpr int timeLimit = 100;
+        constexpr int timeLimit = 2;
         constexpr float lengthThreshold = 0.0f;
         constexpr float timeAboveThresholdToScore = 0.05f;
     }
 
     namespace colors {
-        const Color inputRectColor = Color(80, 80, 80);
-        const Color backgroundColor = Color(51, 56, 61);
 
         namespace pendulum {
             const Color barColor = Color(255, 255, 255);
@@ -86,6 +103,14 @@ namespace config {
         namespace buttons {
             const Color normal = Color(66, 108, 245);
             const Color outline = Color(255, 255, 255);
+        }
+
+        namespace layout {
+            const Color scoreBackgroundColor = Color(93, 100, 107);
+            const Color scoreOutlineColor = Color(255, 255, 255);
+            const Color scoreLineColor = Color(43, 120, 196);
+            const Color inputRectColor = Color(80, 80, 80);
+            const Color backgroundColor = Color(51, 56, 61);
         }
     }
 

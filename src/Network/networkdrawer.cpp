@@ -5,7 +5,7 @@
 NetworkDrawer::NetworkDrawer(Genome &genome) : genome(genome) {}
 
 void NetworkDrawer::draw(sf::RenderWindow &window) {
-    window.clear(config::colors::backgroundColor);
+    window.clear(config::colors::layout::backgroundColor);
     calculateNodesPositions();
     drawConnections(window);
     drawNodes(window);
@@ -17,12 +17,14 @@ void NetworkDrawer::setGenome(const Genome &gen) {
 
 void NetworkDrawer::calculateNodesPositions() {
     int depth = genome.getDepth();
-    float xSpacing = (float) config::window::width / (float) (depth + 1);
+    float xSpacing = (float) allowedSpace.x / (float) (depth + 1);
     for (int i = 0; i < depth; i++) {
         std::vector<Node> nodes = genome.getNodesInLayer(i);
-        float ySpacing = (float) config::window::height / (float) (nodes.size() + 1);
+        float ySpacing = (float) allowedSpace.y / (float) (nodes.size() + 1);
         for (int j = 0; j < nodes.size(); j++) {
-            nodesPositions[nodes[j].id] = Vector2f((float) (i + 1) * xSpacing, (float) (j + 1) * ySpacing);
+            float x = (float) (i + 1) * xSpacing + origin.x;
+            float y = (float) (j + 1) * ySpacing + origin.y;
+            nodesPositions[nodes[j].id] = Vector2f(x, y);
         }
     }
 }

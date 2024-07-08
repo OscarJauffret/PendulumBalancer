@@ -9,8 +9,10 @@
 #include "button.hpp"
 #include <SFML/Graphics.hpp>
 #include <SFML/Window.hpp>
+#include <deque>
 
 using namespace sf;
+using namespace std;
 
 class renderer {
     Vector2i resolution;
@@ -24,9 +26,13 @@ public:
     Mode askMode();
     Button createModeButton(bool isManualButton);
 
+    void drawScoresChart(const deque<int> &scores);
+
     RenderWindow& getWindow();
     Time getTimePerFrame();
 
+    void drawScoresBackground();
+    void drawScoresLines(const deque<int> &scores);
 };
 
 

@@ -18,6 +18,9 @@ public:
     static void changeWeightMutation(Genome &genome);
 
     static bool connectionsExists(vector<Connection> &connections, int from, int to);
+
+    static Connection
+    getNewConnectionNodes(Genome &genome, vector<Node> &fromNodes, vector<Node> &toNodes);
 };
 
 

@@ -43,21 +43,32 @@ void Mutator::addConnectionMutation(Genome &genome) {
     vector<Connection> connections = genome.getConnections();
     vector<Node> fromNodes = genome.getNodesExceptLayer(-1);
     vector<Node> toNodes = genome.getNodesExceptLayer(0);
-    int fromIndex = RNG::randomIntBetween(0, (int) fromNodes.size() - 1);
-    int toIndex = RNG::randomIntBetween(0, (int) toNodes.size() - 1);
-    int from = fromNodes[fromIndex].id;
-    int to = toNodes[toIndex].id;
+    Connection connection = getNewConnectionNodes(genome, fromNodes, toNodes);
+
+    int from = connection.from;
+    int to = connection.to;
     if (connectionsExists(connections, from, to)) {
         return;
     }
     genome.addConnection(RNG::randomFloatBetweenMinus1And1(true), from, to);
 }
 
+Connection Mutator::getNewConnectionNodes(Genome &genome, vector<Node> &fromNodes, vector<Node> &toNodes) {
+    while (true) {
+        int fromIndex = RNG::randomIntBetween(0, (int) fromNodes.size() - 1);
+        int toIndex = RNG::randomIntBetween(0, (int) toNodes.size() - 1);
+        Node fromNode = fromNodes[fromIndex];
+        Node toNode = toNodes[toIndex];
+        int toLayer = genome.checkIfLayerIsLast(toNode.layer);
+        if (fromNode.layer < toLayer) {
+            return {0.0, fromNode.id, toNode.id}; }
+    }
+}
+
 bool Mutator::connectionsExists(vector<Connection> &connections, int from, int to) {
     bool exists = false;
     for (Connection connection: connections) {
         if (connection.from == from && connection.to == to) {
-            cout << "Connection already exists" << endl;
             exists = true;
         }
     }

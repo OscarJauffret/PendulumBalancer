@@ -6,19 +6,26 @@
 
 #include "headers/genetic.h"
 
-Genetic::Genetic(RenderWindow &window, Time timePerFrame) : window(window), timePerFrame(timePerFrame) {
+Genetic::Genetic(renderer &renderer) : window(renderer.getWindow()), timePerFrame(renderer.getTimePerFrame()) {
     initializePopulation(config::genetic::populationSize,
                          config::net::inputSize);
-    bool training = true;
     int generation = 0;
+    NetworkDrawer drawer(population[0]);
+    drawer.draw(window);
+    window.display();
+    deque<int> scores = {};
     while (generation < 10) {
         cout << "Generation: " << generation << endl;
         population = selection();
-        for (Genome genome: population) {
-            cout << "Fitness: " << genome.getFitness() << endl;
-        }
-        NetworkDrawer drawer(population[0]);
+        cout << "Best fitness: " << population[0].getFitness() << endl;
+        drawer.setGenome(population[0]);
         drawer.draw(window);
+        scores.push_back(population[0].getFitness());
+        if (scores.size() > 10) {
+            scores.pop_front();
+        }
+        cout << "Scores: "; for (int score: scores) { cout << score << " "; } cout << endl;
+        renderer.drawScoresChart(scores);
         window.display();
 
         vector<Genome> newPopulation = initializeNewPopulationWithElites();
@@ -28,6 +35,7 @@ Genetic::Genetic(RenderWindow &window, Time timePerFrame) : window(window), time
             chosenGenome = mutation(chosenGenome);
             newPopulation.push_back(chosenGenome);
         }
+        population = newPopulation;
     }
 }
 
@@ -113,7 +121,7 @@ vector<Genome> Genetic::selection() {
 
 Genome Genetic::mutation(Genome &genome) {
     int numMutations = config::genetic::numberOfMutations;
-    int mutationType = RNG::randomIntBetween(0, numMutations);
+    int mutationType = RNG::randomIntBetween(0, numMutations - 1);
     switch (mutationType) {
         case 0:         // Nothing
             return genome;

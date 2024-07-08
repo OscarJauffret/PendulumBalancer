@@ -16,38 +16,14 @@ Genome::Genome(int inputSize, bool randomBiases, bool randomlyWeightedConnection
 }
 
 int Genome::createNode(float bias, Activation activation, int layer) {
-    Node node{};
-    node.id = (int) nodes.size();
-    node.bias = bias;
-    node.activation = ActivationFunction::getFunction(activation);
-    node.layer = layer;
+    Node node((int) nodes.size(), layer, bias, ActivationFunction::getFunction(activation));
     nodes.push_back(node);
     return node.id;
 }
 
 void Genome::addConnection(float weight, int from, int to) {
-    Connection connection{};
-    connection.weight = weight;
-    connection.from = from;
-    connection.to = to;
+    Connection connection(weight, from, to);
     connections.push_back(connection);
-}
-
-void Genome::linkNodeToAdjacentLayers(int nodeId, int layer) {
-    if (layer == 0 || layer == getDepth() - 1) {
-        throw std::invalid_argument("Cannot link node to adjacent layers in input or output layer");
-    }
-    vector<Node> nodesInLayer = getNodesInLayer(layer);
-    vector<Node> nodesInPreviousLayer = getNodesInLayer(layer - 1);
-    int randomIndex = RNG::randomIntBetween(0, (int) nodesInPreviousLayer.size() - 1);
-    addConnection(RNG::randomFloatBetweenMinus1And1(true), nodesInPreviousLayer[randomIndex].id, nodeId);
-    int nextLayer = layer + 1;
-    if (nextLayer == getDepth() - 1) {
-        nextLayer = -1;
-    }
-    vector<Node> nodesInNextLayer = getNodesInLayer(nextLayer);
-    randomIndex = RNG::randomIntBetween(0, (int) nodesInNextLayer.size() - 1);
-    addConnection(RNG::randomFloatBetweenMinus1And1(true), nodeId, nodesInNextLayer[randomIndex].id);
 }
 
 int Genome::checkIfLayerIsLast(int layer) {
@@ -92,6 +68,10 @@ int Genome::getDepth() {
         }
     }
     return maxDepth + 2;    // +1 for output layer, +1 for input layer, because output layer has a layer of -1
+}
+
+vector<Node> Genome::getNodes() {
+    return nodes;
 }
 
 vector<Node> Genome::getNodesInLayer(int layer) {

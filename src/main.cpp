@@ -3,36 +3,33 @@
 #include "Render/headers/renderer.hpp"
 #include "Network/headers/genetic.h"
 
-void launchGame(Mode mode, RenderWindow &window, Time timePerFrame);
-void launchNetwork();
+void launchGame(renderer &renderer);
+void launchNetwork(RenderWindow &window);
 
 int main() {
     renderer r;
-//    launchGame(r.askMode(), r.getWindow(), r.getTimePerFrame());
-    launchNetwork();
+    launchGame(r);
+//    launchNetwork(r.getWindow());
     return 0;
 }
 
-void launchGame(Mode mode, RenderWindow &window, Time timePerFrame) {
+void launchGame(renderer &renderer) {
+    Mode mode = renderer.askMode();
     if (mode == Mode::Manual) {
         int fitness = 0;
-        Engine engine(window, timePerFrame, true, mode, Genome(0, false, false), fitness);
+        Engine engine(renderer.getWindow(), renderer.getTimePerFrame(), true, mode, Genome(0, false, false), fitness);
         engine.run();
     } else {
-        Genetic genetic(window, timePerFrame);
+        Genetic genetic(renderer);
     }
 }
 
-void launchNetwork() {
+void launchNetwork(RenderWindow &window) {
     Genome genome(6, true, true);
 //    genome.createNode(0, Activation::Relu, 1, true);
 //    genome.createNode(0, Activation::Relu, 1, true);
 //    genome.createNode(0, Activation::Relu, 2, true);
     NetworkDrawer drawer(genome);
-
-    RenderWindow window(VideoMode(config::window::width, config::window::height), config::window::title,
-                        config::window::style, ContextSettings(0, 0, 8));
-    window.setFramerateLimit(config::window::fps);
 
     while (window.isOpen()) {
         Event event;
@@ -42,7 +39,7 @@ void launchNetwork() {
             }
             if (event.type == Event::KeyPressed) {
                 if (event.key.code == Keyboard::Space) {
-                    Mutator::changeWeightMutation(genome);
+                    genome = Genetic::mutation(genome);
                     drawer.setGenome(genome);
                 }
             }

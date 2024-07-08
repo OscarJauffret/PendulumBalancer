@@ -16,6 +16,11 @@ float RNG::randomFloatBetweenMinus1And1(bool random) {
 }
 
 int RNG::randomIntBetween(int min, int max) {
+    if (min > max) {
+        throw std::invalid_argument("min should not be greater than max");
+    } else if (min == max) {
+        return min;
+    }
     static random_device rd;
     static mt19937 gen(rd());
     uniform_int_distribution<int> dis(min, max);

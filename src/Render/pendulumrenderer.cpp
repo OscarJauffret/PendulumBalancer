@@ -21,7 +21,7 @@ void PendulumRenderer::draw(Vector2f barPosition, float angle, Vector2f tipBallP
     if (!render) {
         return;
     }
-    window.clear(config::colors::backgroundColor);
+    window.clear(config::colors::layout::backgroundColor);
     window.draw(track);
     window.draw(threshold);
     drawPendulum(barPosition, angle, tipBallPosition);
@@ -55,7 +55,7 @@ void PendulumRenderer::draw_score(int fitness) {
 void PendulumRenderer::draw_inputs(int key, Mode mode) {
     RectangleShape rectangleInput;
     rectangleInput.setSize(Vector2f(150, 100));
-    rectangleInput.setFillColor(config::colors::inputRectColor);
+    rectangleInput.setFillColor(config::colors::layout::inputRectColor);
     rectangleInput.setPosition(10, 10);
     window.draw(rectangleInput);
 

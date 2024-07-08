@@ -21,12 +21,15 @@ struct Node {
     ActivationPtr activation;
 
     Node() : id(-1), layer(-2), value(0.0), bias(0.0), activation(nullptr) {}
+    Node(int id, int layer, float bias, ActivationPtr activation) : id(id), layer(layer), value(0.0), bias(bias), activation(activation) {}
 };
 
 struct Connection {
     double weight;
     int from;
     int to;
+
+    Connection(double weight, int from, int to) : weight(weight), from(from), to(to) {}
 };
 
 class Genome {
@@ -39,13 +42,13 @@ public:
 
     int createNode(float bias, Activation activation, int layer);
     void addConnection(float weight, int from, int to);
-    void linkNodeToAdjacentLayers(int nodeId, int layer);
     int checkIfLayerIsLast(int layer);
     static bool checkIfRoomForNode(int fromLayer, int toLayer);
     void updateLayersAfter(int layer);
     void removeConnection(int from, int to);
 
     int getDepth();
+    vector<Node> getNodes();
     vector<Node> getNodesInLayer(int layer);
     Node & getNode(int id);
     vector<Connection> getConnections();

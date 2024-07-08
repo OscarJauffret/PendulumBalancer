@@ -5,6 +5,7 @@
 #ifndef PENDULUMBALANCERAI_NETWORKDRAWER_H
 #define PENDULUMBALANCERAI_NETWORKDRAWER_H
 #include "genome.h"
+#include "../../config/configuration.h"
 #include <SFML/Graphics.hpp>
 #include <map>
 
@@ -14,6 +15,8 @@ using std::map;
 class NetworkDrawer {
     Genome genome;
     map<int, Vector2f> nodesPositions;
+    const Vector2f origin = Vector2f(config::layout::net::originX, config::layout::net::originY);
+    const Vector2f allowedSpace = Vector2f(config::layout::net::width, config::layout::net::height);
 
 public:
     explicit NetworkDrawer(Genome &genome);

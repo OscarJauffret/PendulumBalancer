@@ -22,7 +22,7 @@ Mode renderer::askMode() {
     Mode mode = Mode::Manual;
     bool chosen = false;
     while (window.isOpen() && !chosen) {
-        sf::Event event;
+        sf::Event event{};
         while (window.pollEvent(event)) {
             if (event.type == sf::Event::Closed)
                 window.close();
@@ -39,7 +39,7 @@ Mode renderer::askMode() {
             }
         }
 
-        window.clear(config::colors::backgroundColor);
+        window.clear(config::colors::layout::backgroundColor);
         manualButton.draw(window);
         aiButton.draw(window);
         window.display();
@@ -60,6 +60,34 @@ Button renderer::createModeButton(bool isManualButton) {
     string text = isManualButton ? "Manual" : "AI";
 
     return Button(buttonX, buttonY, buttonWidth, buttonHeight, text, font);
+}
+
+void renderer::drawScoresChart(const deque<int> &scores) {
+    drawScoresBackground();
+    drawScoresLines(scores);
+}
+
+void renderer::drawScoresBackground() {
+    RectangleShape background(Vector2f(config::layout::score::width, config::layout::score::height));
+    background.setPosition(config::layout::score::originX, config::layout::score::originY);
+    background.setOutlineThickness(config::layout::score::bgOutlineThickness);
+    background.setOutlineColor(config::colors::layout::scoreOutlineColor);
+    background.setFillColor(config::colors::layout::scoreBackgroundColor);
+    window.draw(background);
+}
+
+void renderer::drawScoresLines(const deque<int> &scores) {
+    float x = config::layout::score::originX + config::layout::score::spaceBetweenBars / 2;
+    int maxScore = *max_element(scores.begin(), scores.end());
+    for (int score : scores) {
+        float normalizedScore = static_cast<float>(score) / maxScore;
+        score = normalizedScore * config::layout::score::height * 0.9f;
+        RectangleShape line(Vector2f(config::layout::score::barWidth, score));
+        line.setPosition(x, config::layout::score::originY + config::layout::score::height - score);
+        line.setFillColor(config::colors::layout::scoreLineColor);
+        window.draw(line);
+        x += config::layout::score::barWidth + config::layout::score::spaceBetweenBars;
+    }
 }
 
 RenderWindow& renderer::getWindow() {

@@ -9,10 +9,12 @@
 #include "mutator.hpp"
 #include "../../Engine/headers/Engine.h"
 #include "networkdrawer.h"
+#include "../../Render/headers/renderer.hpp"
 #include <vector>
 #include <algorithm>
 #include <thread>
 #include <future>
+#include <deque>
 
 using std::vector;
 
@@ -21,7 +23,7 @@ class Genetic {
     RenderWindow& window;
     Time timePerFrame;
 public:
-    Genetic(RenderWindow &window, Time timePerFrame);
+    Genetic(renderer &renderer);
     vector<Genome> trainAgents(vector<Genome> genomeBatch);
     void trainAgent(Genome genome, bool shouldRender, int &fitness);
 
