@@ -7,7 +7,7 @@
 
 PendulumRenderer::PendulumRenderer(RenderWindow &window, float yThreshold, Vector2f startPosition,
                                    bool render)
-        : window(window), yThreshold(yThreshold), startPosition(startPosition), render(render) {
+        : window(window), render(render) {
     if (!font.loadFromFile(config::assets::fontPath)) {
         cerr << "Failed to load font" << endl;
     }
@@ -26,7 +26,7 @@ void PendulumRenderer::draw(Vector2f barPosition, float angle, Vector2f tipBallP
     window.draw(threshold);
     drawPendulum(barPosition, angle, tipBallPosition);
     draw_score(fitness);
-    draw_inputs(keyPressed, mode);
+//    draw_inputs(keyPressed, mode);
     window.display();
 }
 

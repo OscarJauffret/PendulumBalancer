@@ -9,12 +9,11 @@
 #include "button.hpp"
 #include <SFML/Graphics.hpp>
 #include <SFML/Window.hpp>
-#include <deque>
 
 using namespace sf;
 using namespace std;
 
-class renderer {
+class Renderer {
     Vector2i resolution;
     RenderWindow window;
     const unsigned int FPS = config::window::fps;
@@ -22,17 +21,29 @@ class renderer {
 
     Font font;
 public:
-    renderer();
+    Renderer();
     Mode askMode();
     Button createModeButton(bool isManualButton);
 
-    void drawScoresChart(const deque<int> &scores);
-
     RenderWindow& getWindow();
+
     Time getTimePerFrame();
 
+    void drawGeneration(int generation, long long elapsedTime);
+    void drawGenerationText(int generation);
+    void drawRealTime(long long int timeElapsed);
+    void drawVirtualTime(int generation);
+    string formatTime(long long int seconds);
+
+    void drawScoresChart(const vector<int> &scores);
     void drawScoresBackground();
-    void drawScoresLines(const deque<int> &scores);
+    void drawScoresText();
+    void drawScaleLines();
+    void drawScoresLines(vector<int> scores);
+
+    Text getText(const string& text, int charSize, Color color, Vector2f position) const;
+
+    void drawGenerationBackground();
 };
 
 

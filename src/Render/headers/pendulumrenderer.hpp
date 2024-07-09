@@ -15,10 +15,8 @@ class PendulumRenderer {
 private:
     RenderWindow& window;
     Font font;
-    float yThreshold;
     RectangleShape bar;
     CircleShape baseBall;
-    Vector2f startPosition;
     CircleShape tipBall;
     RectangleShape track;
     RectangleShape threshold;

@@ -38,6 +38,7 @@ class Genome {
     int fitness;
 
 public:
+    Genome();
     Genome(int inputSize, bool randomBiases, bool randomlyWeightedConnections);
 
     int createNode(float bias, Activation activation, int layer);

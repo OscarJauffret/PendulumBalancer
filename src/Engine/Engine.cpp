@@ -11,8 +11,8 @@
 Engine::Engine(RenderWindow &window, Time timePerFrame, bool shouldRenderPendulum, Mode mode,
                Genome controllingAgent, int &fitness)
         : window(window),
-          yThreshold((config::window::height / 2) - (config::pendulum::dimensions::length * config::score::lengthThreshold)),
-          pendulum(window, yThreshold, Vector2f(config::window::width / 2, config::window::height / 2), shouldRenderPendulum),
+          yThreshold((config::layout::pendulum::originY) - (config::pendulum::dimensions::length * config::score::lengthThreshold)),
+          pendulum(window, yThreshold, Vector2f(config::layout::pendulum::originX, config::layout::pendulum::originY), shouldRenderPendulum),
           fitness(fitness), timePerFrame(timePerFrame), mode(mode),
           controllingAgent(std::move(controllingAgent)) {
     if (!font.loadFromFile(config::assets::fontPath)) {
@@ -22,10 +22,6 @@ Engine::Engine(RenderWindow &window, Time timePerFrame, bool shouldRenderPendulu
 
 void Engine::updatePendulum() {
     pendulum.update(timePerFrame);
-}
-
-int Engine::getScore() {
-    return fitness;
 }
 
 int Engine::run() {

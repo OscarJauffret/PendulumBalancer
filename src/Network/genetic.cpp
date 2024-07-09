@@ -6,36 +6,49 @@
 
 #include "headers/genetic.h"
 
-Genetic::Genetic(renderer &renderer) : window(renderer.getWindow()), timePerFrame(renderer.getTimePerFrame()) {
+Genetic::Genetic(class Renderer &renderer) : window(renderer.getWindow()), timePerFrame(renderer.getTimePerFrame()), renderer(renderer), duration(0) {
     initializePopulation(config::genetic::populationSize,
                          config::net::inputSize);
-    int generation = 0;
-    NetworkDrawer drawer(population[0]);
-    drawer.draw(window);
-    window.display();
-    deque<int> scores = {};
-    while (generation < 10) {
+    drawer.setGenome(population[0]);
+}
+
+void Genetic::train() {
+    auto start = high_resolution_clock::now();
+    updateRendering(true);
+    while (window.isOpen()) {
         cout << "Generation: " << generation << endl;
         population = selection();
         cout << "Best fitness: " << population[0].getFitness() << endl;
-        drawer.setGenome(population[0]);
-        drawer.draw(window);
         scores.push_back(population[0].getFitness());
-        if (scores.size() > 10) {
-            scores.pop_front();
-        }
-        cout << "Scores: "; for (int score: scores) { cout << score << " "; } cout << endl;
-        renderer.drawScoresChart(scores);
-        window.display();
+        drawer.setGenome(population[0]);
+
+        auto now = chrono::high_resolution_clock::now();
+        duration = duration_cast<chrono::seconds>(now - start).count();
+        generation++;
+
+        updateRendering(true);
+        replayBestGenome();
+        updateRendering(true);
 
         vector<Genome> newPopulation = initializeNewPopulationWithElites();
-        generation++;
         while (newPopulation.size() < config::genetic::populationSize) {
             Genome chosenGenome = population[tournamentSelection()];
             chosenGenome = mutation(chosenGenome);
             newPopulation.push_back(chosenGenome);
         }
         population = newPopulation;
+    }
+}
+
+void Genetic::updateRendering(bool clear) {
+    if (clear) {
+        window.clear(config::colors::layout::backgroundColor);
+    }
+    drawer.draw(window);
+    renderer.drawGeneration(generation, duration);
+    renderer.drawScoresChart(scores);
+    if (clear) {
+        window.display();
     }
 }
 
@@ -46,6 +59,11 @@ vector<Genome> Genetic::initializeNewPopulationWithElites() {
         newPopulation.push_back(population[i++]);
     }
     return newPopulation;
+}
+
+void Genetic::replayBestGenome() {
+    int fitness = 0;
+    trainAgent(population[0], true, fitness);
 }
 
 int Genetic::calculateTotalFitness() {
@@ -72,19 +90,34 @@ int Genetic::tournamentSelection() {
 }
 
 vector<Genome> Genetic::trainAgents(vector<Genome> genomeBatch) {
-    vector<thread> threads;
+    vector<future<void>> futures;
 
-    for (Genome &genome: genomeBatch) {
-        threads.emplace_back([&genome, this]() mutable {
+    for (Genome &genome : genomeBatch) {
+        promise<void> prom;
+        futures.push_back(prom.get_future());
+
+        thread([&genome, this, prom = move(prom)]() mutable {
             int fitness = 0;
             trainAgent(genome, false, fitness);
             genome.setFitness(fitness);
-        });
+            prom.set_value();
+        }).detach();
     }
 
-    for (thread &t: threads) {
-        t.join();
+    while (!futures.empty()) {
+        // Traiter les événements de la fenêtre ici
+        sf::Event event{};
+        while (window.pollEvent(event)) {
+            if (event.type == sf::Event::Closed) {
+                window.close();
+                return {};
+            }
+        }
+        futures.erase(remove_if(futures.begin(), futures.end(),
+                                [](const future<void> &fut) { return fut.wait_for(chrono::seconds(0)) == future_status::ready; }),
+                      futures.end());
     }
+
     return genomeBatch;
 }
 

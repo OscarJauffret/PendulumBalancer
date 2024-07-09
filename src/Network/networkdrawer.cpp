@@ -71,4 +71,6 @@ sf::RectangleShape NetworkDrawer::drawConnection(sf::Vector2f from, sf::Vector2f
     return connection;
 }
 
+NetworkDrawer::NetworkDrawer() = default;
+
 

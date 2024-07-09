@@ -31,6 +31,7 @@ public:
     void drawConnections(sf::RenderWindow &window);
     static sf::RectangleShape drawConnection(sf::Vector2f from, sf::Vector2f to, float thickness);
 
+    NetworkDrawer();
 };
 
 

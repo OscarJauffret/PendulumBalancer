@@ -3,17 +3,17 @@
 #include "Render/headers/renderer.hpp"
 #include "Network/headers/genetic.h"
 
-void launchGame(renderer &renderer);
+void launchGame(Renderer &renderer);
 void launchNetwork(RenderWindow &window);
 
 int main() {
-    renderer r;
+    Renderer r;
     launchGame(r);
 //    launchNetwork(r.getWindow());
     return 0;
 }
 
-void launchGame(renderer &renderer) {
+void launchGame(Renderer &renderer) {
     Mode mode = renderer.askMode();
     if (mode == Mode::Manual) {
         int fitness = 0;
@@ -21,6 +21,7 @@ void launchGame(renderer &renderer) {
         engine.run();
     } else {
         Genetic genetic(renderer);
+        genetic.train();
     }
 }
 

@@ -1,5 +1,9 @@
 #include "headers/genome.h"
 
+Genome::Genome() {
+    fitness = 0;
+}
+
 Genome::Genome(int inputSize, bool randomBiases, bool randomlyWeightedConnections) {
     float bias;
 

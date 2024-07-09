@@ -47,7 +47,7 @@ public:
     int run();
 
     void updatePendulum();
-    int getScore();
+
     float getInputValue(int inputId);
 
     void checkTipPosition();
