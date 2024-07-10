@@ -36,12 +36,13 @@ class Genome {
     vector<Node> nodes;
     vector<Connection> connections;
     int fitness;
+    unsigned long long int trainingTime = 0;
 
 public:
     Genome();
     Genome(int inputSize, bool randomBiases, bool randomlyWeightedConnections);
 
-    int createNode(float bias, Activation activation, int layer);
+    int createNode(float bias, Activation activation, int layer, int id);
     void addConnection(float weight, int from, int to);
     int checkIfLayerIsLast(int layer);
     static bool checkIfRoomForNode(int fromLayer, int toLayer);
@@ -49,10 +50,11 @@ public:
     void removeConnection(int from, int to);
 
     int getDepth();
-    vector<Node> getNodes();
+    vector<Node> & getNodes();
+    vector<Connection> & getConnections();
+
     vector<Node> getNodesInLayer(int layer);
     Node & getNode(int id);
-    vector<Connection> getConnections();
 
     vector<Node> getNodesExceptLayer(int layer);
 
@@ -61,9 +63,17 @@ public:
 
     float forward();
     void setFitness(int fit);
+    [[nodiscard]] int getFitness() const;
 
-    int getFitness();
+    void setTrainingTime(unsigned long long int time);
+    [[nodiscard]] unsigned long long int getTrainingTime() const;
+
+    double getConnectionWeight(int from, int to);
+
     void setConnectionWeight(int index, float weight);
+
+    float getNodeBias(int id);
+    void setNodeBias(int id, float bias);
 };
 
 #endif //PENDULUMBALANCERAI_GENOME_H

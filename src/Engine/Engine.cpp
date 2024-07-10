@@ -8,11 +8,12 @@
 
 
 
-Engine::Engine(RenderWindow &window, Time timePerFrame, bool shouldRenderPendulum, Mode mode,
-               Genome controllingAgent, int &fitness)
+Engine::Engine(RenderWindow &window, Time timePerFrame, Mode mode, Genome controllingAgent, int &fitness,
+               bool shouldRenderPendulum, PendulumRenderer &pendRenderer)
         : window(window),
-          yThreshold((config::layout::pendulum::originY) - (config::pendulum::dimensions::length * config::score::lengthThreshold)),
-          pendulum(window, yThreshold, Vector2f(config::layout::pendulum::originX, config::layout::pendulum::originY), shouldRenderPendulum),
+          yThreshold(config::score::yThreshold),
+          pendulum(window, Vector2f(config::layout::pendulum::originX, config::layout::pendulum::originY), shouldRenderPendulum,
+                   pendRenderer),
           fitness(fitness), timePerFrame(timePerFrame), mode(mode),
           controllingAgent(std::move(controllingAgent)) {
     if (!font.loadFromFile(config::assets::fontPath)) {

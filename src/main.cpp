@@ -1,13 +1,16 @@
 #include "Engine/headers/Engine.h"
-#include "Network/headers/networkdrawer.h"
+#include "Render/headers/networkrenderer.h"
 #include "Render/headers/renderer.hpp"
 #include "Network/headers/genetic.h"
 
 void launchGame(Renderer &renderer);
 void launchNetwork(RenderWindow &window);
+NetworkRenderer networkRenderer;
+PendulumRenderer pendulumRenderer = PendulumRenderer(config::score::yThreshold, Vector2f(config::layout::pendulum::originX,
+                                                                      config::layout::pendulum::originY));
 
 int main() {
-    Renderer r;
+    Renderer r(pendulumRenderer, networkRenderer);
     launchGame(r);
 //    launchNetwork(r.getWindow());
     return 0;
@@ -15,12 +18,19 @@ int main() {
 
 void launchGame(Renderer &renderer) {
     Mode mode = renderer.askMode();
+    string genomePath = renderer.askGenomePath();
+    pendulumRenderer.initializeShapes(config::score::yThreshold, Vector2f(config::layout::pendulum::originX,
+                                                                         config::layout::pendulum::originY));
+    if (genomePath == "close") {
+        return;
+    }
     if (mode == Mode::Manual) {
         int fitness = 0;
-        Engine engine(renderer.getWindow(), renderer.getTimePerFrame(), true, mode, Genome(0, false, false), fitness);
+        Engine engine(renderer.getWindow(), renderer.getTimePerFrame(), mode, Genome(0, false, false), fitness, true,
+                      pendulumRenderer);
         engine.run();
     } else {
-        Genetic genetic(renderer);
+        Genetic genetic(renderer, genomePath);
         genetic.train();
     }
 }
@@ -30,7 +40,7 @@ void launchNetwork(RenderWindow &window) {
 //    genome.createNode(0, Activation::Relu, 1, true);
 //    genome.createNode(0, Activation::Relu, 1, true);
 //    genome.createNode(0, Activation::Relu, 2, true);
-    NetworkDrawer drawer(genome);
+    NetworkRenderer drawer(genome);
 
     while (window.isOpen()) {
         Event event;
@@ -40,11 +50,12 @@ void launchNetwork(RenderWindow &window) {
             }
             if (event.type == Event::KeyPressed) {
                 if (event.key.code == Keyboard::Space) {
-                    genome = Genetic::mutation(genome);
+                    genome = Mutator::mutate(genome);
                     drawer.setGenome(genome);
                 }
             }
         }
+        window.clear();
         drawer.draw(window);
         window.display();
     }

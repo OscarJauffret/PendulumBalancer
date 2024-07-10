@@ -1,21 +1,18 @@
-#include <utility>
+#include "headers/networkrenderer.h"
 
-#include "headers/networkdrawer.h"
+NetworkRenderer::NetworkRenderer(Genome &genome) : genome(genome) {}
 
-NetworkDrawer::NetworkDrawer(Genome &genome) : genome(genome) {}
-
-void NetworkDrawer::draw(sf::RenderWindow &window) {
-    window.clear(config::colors::layout::backgroundColor);
+void NetworkRenderer::draw(sf::RenderWindow &window) {
     calculateNodesPositions();
     drawConnections(window);
     drawNodes(window);
 }
 
-void NetworkDrawer::setGenome(const Genome &gen) {
-    NetworkDrawer::genome = gen;
+void NetworkRenderer::setGenome(const Genome &gen) {
+    NetworkRenderer::genome = gen;
 }
 
-void NetworkDrawer::calculateNodesPositions() {
+void NetworkRenderer::calculateNodesPositions() {
     int depth = genome.getDepth();
     float xSpacing = (float) allowedSpace.x / (float) (depth + 1);
     for (int i = 0; i < depth; i++) {
@@ -29,14 +26,14 @@ void NetworkDrawer::calculateNodesPositions() {
     }
 }
 
-void NetworkDrawer::drawNodes(sf::RenderWindow &window) {
+void NetworkRenderer::drawNodes(sf::RenderWindow &window) {
     for (auto & nodesPosition : nodesPositions) {
         Vector2f position = nodesPosition.second;
         drawNode(window, position.x, position.y);
     }
 }
 
-void NetworkDrawer::drawNode(sf::RenderWindow &window, float xPos, float yPos) {
+void NetworkRenderer::drawNode(sf::RenderWindow &window, float xPos, float yPos) {
     sf::CircleShape node(config::netrender::nodeRadius);
     node.setFillColor(config::colors::net::nodeColor);
     node.setOutlineThickness(config::netrender::nodeOutlineThickness);
@@ -45,7 +42,7 @@ void NetworkDrawer::drawNode(sf::RenderWindow &window, float xPos, float yPos) {
     window.draw(node);
 }
 
-void NetworkDrawer::drawConnections(sf::RenderWindow &window) {
+void NetworkRenderer::drawConnections(sf::RenderWindow &window) {
     for (Connection connection : genome.getConnections()) {
         float fromX = nodesPositions[connection.from].x + config::netrender::nodeRadius;
         float fromY = nodesPositions[connection.from].y + config::netrender::nodeRadius;
@@ -56,7 +53,7 @@ void NetworkDrawer::drawConnections(sf::RenderWindow &window) {
     }
 }
 
-sf::RectangleShape NetworkDrawer::drawConnection(sf::Vector2f from, sf::Vector2f to, float thickness) {
+sf::RectangleShape NetworkRenderer::drawConnection(sf::Vector2f from, sf::Vector2f to, float thickness) {
     sf::Vector2f direction = to - from;
     float length = sqrt(pow(direction.x, 2) + pow(direction.y, 2));
     thickness *= config::netrender::maximumConnectionThickness;
@@ -71,6 +68,6 @@ sf::RectangleShape NetworkDrawer::drawConnection(sf::Vector2f from, sf::Vector2f
     return connection;
 }
 
-NetworkDrawer::NetworkDrawer() = default;
+NetworkRenderer::NetworkRenderer() = default;
 
 

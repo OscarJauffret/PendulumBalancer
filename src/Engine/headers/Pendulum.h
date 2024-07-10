@@ -34,10 +34,11 @@ class Pendulum {
     Vector2f barPosition;
     Vector2f tipBallPosition;
 
-    PendulumRenderer renderer;
+    bool render;
+    PendulumRenderer& renderer;
 
 public:
-    explicit Pendulum(RenderWindow &window, float yThreshold, Vector2f startPosition, bool render);
+    explicit Pendulum(RenderWindow &window, Vector2f startPosition, bool render, PendulumRenderer &renderer);
 
     void moveLeft();
     void moveRight();
@@ -51,14 +52,14 @@ public:
 
     void draw(int fitness, int keyPressed, Mode mode);
 
-    float getTipY() const;
+    [[nodiscard]] float getTipY() const;
 
-    float getPosition() const;
-    float getAngularVelocity() const;
-    float getAngleCos() const;
-    float getAngleSin() const;
-    float getAcceleration() const;
-    float getVelocity() const;
+    [[nodiscard]] float getPosition() const;
+    [[nodiscard]] float getAngularVelocity() const;
+    [[nodiscard]] float getAngleCos() const;
+    [[nodiscard]] float getAngleSin() const;
+    [[nodiscard]] float getAcceleration() const;
+    [[nodiscard]] float getVelocity() const;
 };
 
 

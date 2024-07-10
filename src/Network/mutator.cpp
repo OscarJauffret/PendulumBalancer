@@ -4,20 +4,65 @@
 
 #include "headers/mutator.hpp"
 
-void Mutator::addNodeMutation(Genome &genome) {
-    Connection connection = getRandomConnection(genome);
-    Node fromNode = genome.getNode(connection.from);
-    Node toNode = genome.getNode(connection.to);
-    int toLayer = genome.checkIfLayerIsLast(toNode.layer);
-    int newNodeLayer = calculateNewNodeLayer(genome, fromNode, toLayer);
-    initializeNewNodeAndConnections(genome, fromNode, toNode, newNodeLayer);
+Genome Mutator::mutate(Genome &genome) {
+    int numMutations = config::genetic::numberOfMutations;
+    for (int i = 0; i < numMutations; i++) {
+        if (RNG::proba(config::genetic::mut::weightAndBiasMutRate)) {
+            if (RNG::proba(config::genetic::mut::weightMutProportion)) {
+                mutateWeights(genome);
+            } else {
+                mutateBiases(genome);
+            }
+        }
+    }
+    if (RNG::proba(config::genetic::mut::newNodeProba)) {
+        newNode(genome);
+    }
+
+    if (RNG::proba(config::genetic::mut::newConnectionProba)) {
+        newConnection(genome);
+    }
+
+    return genome;
 }
 
-Connection Mutator::getRandomConnection(Genome &genome) {
-    vector<Connection> connections = genome.getConnections();
-    int randomIndex = RNG::randomIntBetween(0, (int) connections.size() - 1);
-    Connection connection = connections[randomIndex];
-    return connection;
+void Mutator::mutateWeights(Genome &genome) {
+    if (genome.getConnections().empty()) {
+        return;
+    }
+    Connection& connection = pickRandom(genome.getConnections());
+    if (RNG::proba(config::genetic::mut::newValueProba)) {
+        connection.weight = RNG::randomFloatBetweenMinus1And1(true);
+    } else {
+        if (RNG::proba(config::genetic::mut::addValueProba)) {
+            connection.weight += RNG::randomFloatBetweenMinus1And1(true);
+        } else {
+            connection.weight += config::genetic::mut::smallWeightRate * RNG::randomFloatBetweenMinus1And1(true);
+        }
+    }
+}
+
+void Mutator::mutateBiases(Genome &genome) {
+    Node& node = pickRandom(genome.getNodes());
+    if (RNG::proba(config::genetic::mut::newValueProba)) {
+        node.bias = RNG::randomFloatBetweenMinus1And1(true);
+    } else {
+        if (RNG::proba(config::genetic::mut::addValueProba)) {
+            node.bias += RNG::randomFloatBetweenMinus1And1(true);
+        } else {
+            node.bias += config::genetic::mut::smallWeightRate * RNG::randomFloatBetweenMinus1And1(true);
+        }
+    }
+}
+
+void Mutator::newNode(Genome &genome) {
+    Connection &connection = pickRandom(genome.getConnections());
+    Node &fromNode = genome.getNode(connection.from);
+    Node &toNode = genome.getNode(connection.to);
+    int toLayer = genome.checkIfLayerIsLast(toNode.layer);
+    int newNodeLayer = calculateNewNodeLayer(genome, fromNode, toLayer);
+    double weight = connection.weight;
+    initializeNewNodeAndConnections(genome, fromNode.id, toNode.id, newNodeLayer, weight);
 }
 
 int Mutator::calculateNewNodeLayer(Genome &genome, const Node &fromNode, int toLayer) {
@@ -32,14 +77,14 @@ int Mutator::calculateNewNodeLayer(Genome &genome, const Node &fromNode, int toL
     return newNodeLayer;
 }
 
-void Mutator::initializeNewNodeAndConnections(Genome &genome, const Node &fromNode, const Node &toNode, int newNodeLayer) {
-    int nodeId = genome.createNode(RNG::randomFloatBetweenMinus1And1(true), Activation::Relu, newNodeLayer);
-    genome.addConnection(RNG::randomFloatBetweenMinus1And1(true), fromNode.id, nodeId);
-    genome.addConnection(RNG::randomFloatBetweenMinus1And1(true), nodeId, toNode.id);
-    genome.removeConnection(fromNode.id, toNode.id);  // Remove old connection (from -> to)
+void Mutator::initializeNewNodeAndConnections(Genome &genome, int fromNodeId, int toNodeId, int newNodeLayer, double previousWeight) {
+    int nodeId = genome.createNode(RNG::randomFloatBetweenMinus1And1(true), Activation::Relu, newNodeLayer, -1);
+    genome.addConnection(previousWeight, fromNodeId, nodeId);
+    genome.addConnection(1.0f, nodeId, toNodeId);
+    genome.removeConnection(fromNodeId, toNodeId);  // Remove old connection (from -> to)
 }
 
-void Mutator::addConnectionMutation(Genome &genome) {
+void Mutator::newConnection(Genome &genome) {
     vector<Connection> connections = genome.getConnections();
     vector<Node> fromNodes = genome.getNodesExceptLayer(-1);
     vector<Node> toNodes = genome.getNodesExceptLayer(0);
@@ -55,10 +100,8 @@ void Mutator::addConnectionMutation(Genome &genome) {
 
 Connection Mutator::getNewConnectionNodes(Genome &genome, vector<Node> &fromNodes, vector<Node> &toNodes) {
     while (true) {
-        int fromIndex = RNG::randomIntBetween(0, (int) fromNodes.size() - 1);
-        int toIndex = RNG::randomIntBetween(0, (int) toNodes.size() - 1);
-        Node fromNode = fromNodes[fromIndex];
-        Node toNode = toNodes[toIndex];
+        Node fromNode = pickRandom(fromNodes);
+        Node toNode = pickRandom(toNodes);
         int toLayer = genome.checkIfLayerIsLast(toNode.layer);
         if (fromNode.layer < toLayer) {
             return {0.0, fromNode.id, toNode.id}; }
@@ -75,8 +118,8 @@ bool Mutator::connectionsExists(vector<Connection> &connections, int from, int t
     return exists;
 }
 
-void Mutator::changeWeightMutation(Genome &genome) {
-    vector<Connection> connections = genome.getConnections();
-    int index = RNG::randomIntBetween(0, (int) connections.size() - 1);
-    genome.setConnectionWeight(index, RNG::randomFloatBetweenMinus1And1(true));
+template<typename TDataType>
+TDataType& Mutator::pickRandom(vector<TDataType> &vector) {
+    int const index = RNG::randomIntBetween(0, (int) vector.size() - 1);
+    return vector[index];
 }

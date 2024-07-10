@@ -6,8 +6,8 @@
 
 using std::cout; using std::endl;
 
-Pendulum::Pendulum(RenderWindow &window, float yThreshold, Vector2f startPosition, bool render) : renderer(window, yThreshold,
-                                                                                                           startPosition, render) {
+Pendulum::Pendulum(RenderWindow &window, Vector2f startPosition, bool render, PendulumRenderer &renderer)
+        : renderer(renderer), render(render) {
     length = config::pendulum::dimensions::length;
     angle = config::pendulum::startAngle;
 
@@ -23,6 +23,8 @@ Pendulum::Pendulum(RenderWindow &window, float yThreshold, Vector2f startPositio
     baseVelocity = config::pendulum::startVelocity;
     baseAcceleration = config::pendulum::startAcceleration;
 
+    barPosition = startPosition;
+    tipBallPosition = Vector2f(startPosition.x, startPosition.y + length);
 }
 
 void Pendulum::moveLeft() {
@@ -53,7 +55,7 @@ void Pendulum::update(Time timePerFrame) {
     applyGravity(timePerFrame);
     updatePosition(timePerFrame);
 
-    // Mettre à jour les positions des composants du pendule*
+    // Mettre à jour les positions des composants du pendule
     barPosition = Vector2f(trackPosition.x + basePosition, trackPosition.y);
     tipBallPosition = Vector2f(barPosition.x + length * sin(angle), barPosition.y + length * cos(angle));
 }
@@ -84,7 +86,9 @@ void Pendulum::checkCollision() {
 }
 
 void Pendulum::draw(int fitness, int keyPressed, Mode mode) {
-    renderer.draw(barPosition, (float) angle, tipBallPosition, fitness, keyPressed, mode);
+    if (render) {
+        renderer.setPendulumInfo(barPosition, angle, tipBallPosition, fitness, keyPressed, mode);
+    }
 }
 
 float Pendulum::getTipY() const {

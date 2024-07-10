@@ -6,34 +6,45 @@
 #define PENDULUMBALANCERAI_RENDERER_HPP
 
 #include "../../config/configuration.h"
+#include "../../Network/headers/genomejsonrepository.hpp"
 #include "button.hpp"
+#include "pendulumrenderer.hpp"
+#include "networkrenderer.h"
 #include <SFML/Graphics.hpp>
 #include <SFML/Window.hpp>
 
 using namespace sf;
 using namespace std;
+using duration = unsigned long long int;
 
 class Renderer {
     Vector2i resolution;
-    RenderWindow window;
     const unsigned int FPS = config::window::fps;
     static const Time timePerFrame;
 
+    PendulumRenderer& pendulumRenderer;
+    NetworkRenderer& networkRenderer;
+
     Font font;
 public:
-    Renderer();
+    RenderWindow window;
+
+    Renderer(PendulumRenderer &pendRenderer, NetworkRenderer &netRenderer);
     Mode askMode();
     Button createModeButton(bool isManualButton);
+    string askGenomePath();
+    string &getGenomeButtonText(int g, const string &path, string &text) const;
 
     RenderWindow& getWindow();
-
     Time getTimePerFrame();
+    PendulumRenderer& getPendulumRenderer();
 
-    void drawGeneration(int generation, long long elapsedTime);
+    void drawGeneration(int generation, duration elapsedTime, duration virtualTime);
     void drawGenerationText(int generation);
-    void drawRealTime(long long int timeElapsed);
-    void drawVirtualTime(int generation);
-    string formatTime(long long int seconds);
+    void drawRealTime(duration timeElapsed);
+    void drawVirtualTime(duration virtualTime);
+    void drawGenerationBackground();
+    static string formatTime(duration seconds);
 
     void drawScoresChart(const vector<int> &scores);
     void drawScoresBackground();
@@ -43,7 +54,14 @@ public:
 
     Text getText(const string& text, int charSize, Color color, Vector2f position) const;
 
-    void drawGenerationBackground();
+    void setNetworkGenome(Genome &genome);
+    void draw(int generation, duration realTime, duration virtualTime, const vector<int> &scores, bool isControlled);
+
+    vector<int> getLastScores(vector<int> &scores) const;
+
+    int getMaxScore(vector<int> &lastScores) const;
+
+    RectangleShape initScoreBar(float x, int score) const;
 };
 
 

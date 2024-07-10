@@ -8,8 +8,9 @@
 #include "genome.h"
 #include "mutator.hpp"
 #include "../../Engine/headers/Engine.h"
-#include "networkdrawer.h"
+#include "../../Render/headers/networkrenderer.h"
 #include "../../Render/headers/renderer.hpp"
+#include "genomejsonrepository.hpp"
 #include <vector>
 #include <algorithm>
 #include <thread>
@@ -22,30 +23,30 @@ using namespace std::chrono;
 
 class Genetic {
     int generation = 0;
-    NetworkDrawer drawer;
     vector<int> scores = {};
     long long int duration;
+    long long int lastDuration;
 
     vector<Genome> population;
     RenderWindow& window;
     Time timePerFrame;
     Renderer& renderer;
+
 public:
-    Genetic(class Renderer &renderer);
+    Genetic(class Renderer &renderer, const string& startingGenomePath);
     void train();
     vector<Genome> trainAgents(vector<Genome> genomeBatch);
-    void trainAgent(Genome genome, bool shouldRender, int &fitness);
+    void trainAgent(Genome genome, int &fitness, bool shouldRender, PendulumRenderer &pendulumRenderer);
     void replayBestGenome();
 
     void initializePopulation(int populationSize, int inputSize);
     vector<Genome> selection();
-    static Genome mutation(Genome &genome);
 
     vector<Genome> initializeNewPopulationWithElites();
     int calculateTotalFitness();
     int tournamentSelection();
 
-    void updateRendering(bool clear);
+    void render(bool isControlled);
 };
 
 

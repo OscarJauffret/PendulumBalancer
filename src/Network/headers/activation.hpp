@@ -17,6 +17,7 @@ enum class Activation {
 };
 
 struct ActivationFunction {
+
     static ActivationPtr getFunction(Activation activation) {
         switch (activation) {
             case Activation::None:

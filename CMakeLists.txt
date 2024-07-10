@@ -15,8 +15,8 @@ add_executable(PendulumBalancerAI src/main.cpp
         src/Network/headers/genome.h
         src/Network/headers/activation.hpp
         src/Network/Genome.cpp
-        src/Network/networkdrawer.cpp
-        src/Network/headers/networkdrawer.h
+        src/Render/networkrenderer.cpp
+        src/Render/headers/networkrenderer.h
         src/Network/genetic.cpp
         src/Network/headers/genetic.h
         src/Render/renderer.cpp
@@ -30,6 +30,10 @@ add_executable(PendulumBalancerAI src/main.cpp
         src/Network/headers/randomnumbergenerator.hpp
         src/Network/mutator.cpp
         src/Network/headers/mutator.hpp
+        src/Network/genomejsonrepository.cpp
+        src/Network/headers/genomejsonrepository.hpp
+        src/Render/generationrender.cpp
+        src/Render/scoresrender.cpp
 )
 
 set(CMAKE_PREFIX_PATH "C:/SFML-2.6.1")

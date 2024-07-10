@@ -13,8 +13,8 @@ using std::cerr; using std::endl;
 
 class PendulumRenderer {
 private:
-    RenderWindow& window;
-    Font font;
+    RectangleShape background;
+    RectangleShape controlledInfoBackground;
     RectangleShape bar;
     CircleShape baseBall;
     CircleShape tipBall;
@@ -22,18 +22,29 @@ private:
     RectangleShape threshold;
     ShapeInitializer shapeInitializer;
 
-    bool render;
+    Vector2f barPosition;
+    float angle;
+    Vector2f tipBallPosition;
+    int fitness;
+    int keyPressed;
+    Mode mode;
 
 public:
-    explicit PendulumRenderer(RenderWindow &window, float yThreshold, Vector2f startPosition,
-                              bool render);
+    PendulumRenderer();
+    explicit PendulumRenderer(float yThreshold, Vector2f startPosition);
+    void initializeShapes(float yThreshold, Vector2f startPosition);
 
-    void draw(Vector2f barPosition, float angle, Vector2f tipBallPosition, int fitness, int keyPressed,
-              Mode mode);
-    void drawPendulum(Vector2f barPosition, float angle, Vector2f tipBallPosition);
+    void setPendulumInfo(Vector2f barPos, float ang, Vector2f tipBallPos, int fit, int key, Mode m);
 
-    void draw_score(int fitness);
-    void draw_inputs(int key, Mode mode);
+    Vector2f getBarPosition();
+
+    void draw(RenderWindow &window, Font &font, bool isControlled);
+    void drawPendulum(RenderWindow &window);
+
+    void drawScore(RenderWindow &window, Font &font) const;
+    void drawInputs(RenderWindow &window, Font &font);
+
+    static void drawControlledInfo(RenderWindow &window, Font &font);
 };
 
 

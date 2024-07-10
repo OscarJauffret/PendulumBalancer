@@ -2,54 +2,60 @@
 // Created by oscar on 05/07/2024.
 //
 
-#include <utility>
-
 #include "headers/genetic.h"
 
-Genetic::Genetic(class Renderer &renderer) : window(renderer.getWindow()), timePerFrame(renderer.getTimePerFrame()), renderer(renderer), duration(0) {
-    initializePopulation(config::genetic::populationSize,
-                         config::net::inputSize);
-    drawer.setGenome(population[0]);
+Genetic::Genetic(class Renderer &renderer, const string& startingGenomePath)
+        : window(renderer.getWindow()), timePerFrame(renderer.getTimePerFrame()), renderer(renderer), duration(0) {
+    if (startingGenomePath.empty()) {
+        initializePopulation(config::genetic::populationSize,
+                             config::net::inputSize);
+        lastDuration = 0;
+    } else {
+        population = {GenomeJSonRepository::loadGenomeFromFile(startingGenomePath)};
+        for (int i = 1; i < config::genetic::populationSize; i++) {
+            population.emplace_back(config::net::inputSize, true, true);
+        }
+        lastDuration = population[0].getTrainingTime();
+    }
+    renderer.setNetworkGenome(population[0]);
 }
 
 void Genetic::train() {
     auto start = high_resolution_clock::now();
-    updateRendering(true);
+    render(false);
     while (window.isOpen()) {
-        cout << "Generation: " << generation << endl;
+        cout << "Generation: " << generation;
         population = selection();
-        cout << "Best fitness: " << population[0].getFitness() << endl;
+        cout << " Best fitness: " << population[0].getFitness() << endl;
         scores.push_back(population[0].getFitness());
-        drawer.setGenome(population[0]);
+        renderer.setNetworkGenome(population[0]);
 
         auto now = chrono::high_resolution_clock::now();
         duration = duration_cast<chrono::seconds>(now - start).count();
         generation++;
 
-        updateRendering(true);
+        render(false);
         replayBestGenome();
-        updateRendering(true);
+        render(false);
 
         vector<Genome> newPopulation = initializeNewPopulationWithElites();
         while (newPopulation.size() < config::genetic::populationSize) {
             Genome chosenGenome = population[tournamentSelection()];
-            chosenGenome = mutation(chosenGenome);
+            chosenGenome = Mutator::mutate(chosenGenome);
             newPopulation.push_back(chosenGenome);
         }
         population = newPopulation;
     }
+    Genome toSave = population[0];
+    toSave.setTrainingTime(generation * config::genetic::populationSize * config::score::timeLimit + lastDuration);
+    toSave.setFitness(population[0].getFitness());
+    GenomeJSonRepository::saveGenomeToFile(toSave);
 }
 
-void Genetic::updateRendering(bool clear) {
-    if (clear) {
-        window.clear(config::colors::layout::backgroundColor);
-    }
-    drawer.draw(window);
-    renderer.drawGeneration(generation, duration);
-    renderer.drawScoresChart(scores);
-    if (clear) {
-        window.display();
-    }
+void Genetic::render(bool isControlled) {
+    renderer.draw(generation, duration,
+                  lastDuration + generation * config::genetic::populationSize * config::score::timeLimit, scores,
+                  isControlled);
 }
 
 vector<Genome> Genetic::initializeNewPopulationWithElites() {
@@ -62,8 +68,27 @@ vector<Genome> Genetic::initializeNewPopulationWithElites() {
 }
 
 void Genetic::replayBestGenome() {
-    int fitness = 0;
-    trainAgent(population[0], true, fitness);
+    // Launch the best genome in a separate thread
+    promise<void> prom;
+    future<void> fut = prom.get_future();
+    thread([prom = std::move(prom), this]() mutable {
+        int fitness = 0;
+        trainAgent(population[0], fitness, true, renderer.getPendulumRenderer());
+        prom.set_value();
+    }).detach();
+
+    // Wait for the thread to finish and update rendering while waiting
+    while (fut.wait_for(chrono::seconds(0)) != future_status::ready){
+        // Traiter les événements de la fenêtre ici
+        sf::Event event{};
+        while (window.pollEvent(event)) {
+            if (event.type == sf::Event::Closed) {
+                window.close();
+                return;
+            }
+        }
+        render(true);
+    }
 }
 
 int Genetic::calculateTotalFitness() {
@@ -76,6 +101,9 @@ int Genetic::calculateTotalFitness() {
 
 int Genetic::tournamentSelection() {
     int totalFitness = calculateTotalFitness();
+    if (totalFitness == 0) {
+        return 0;
+    }
     int randomFitness = RNG::randomIntBetween(0, totalFitness - 1);
     int currentFitness = 0;
     int i = 0;
@@ -98,7 +126,7 @@ vector<Genome> Genetic::trainAgents(vector<Genome> genomeBatch) {
 
         thread([&genome, this, prom = move(prom)]() mutable {
             int fitness = 0;
-            trainAgent(genome, false, fitness);
+            trainAgent(genome, fitness, false, renderer.getPendulumRenderer());
             genome.setFitness(fitness);
             prom.set_value();
         }).detach();
@@ -121,8 +149,8 @@ vector<Genome> Genetic::trainAgents(vector<Genome> genomeBatch) {
     return genomeBatch;
 }
 
-void Genetic::trainAgent(Genome genome, bool shouldRender, int &fitness) {
-    Engine engine(window, timePerFrame, shouldRender, Mode::Ai, std::move(genome), fitness);
+void Genetic::trainAgent(Genome genome, int &fitness, bool shouldRender, PendulumRenderer &pendulumRenderer) {
+    Engine engine(window, timePerFrame, Mode::Ai, std::move(genome), fitness, shouldRender, pendulumRenderer);
     engine.run();
 }
 
@@ -150,27 +178,6 @@ vector<Genome> Genetic::selection() {
         return a.getFitness() > b.getFitness();
     });
     return newPopulation;
-}
-
-Genome Genetic::mutation(Genome &genome) {
-    int numMutations = config::genetic::numberOfMutations;
-    int mutationType = RNG::randomIntBetween(0, numMutations - 1);
-    switch (mutationType) {
-        case 0:         // Nothing
-            return genome;
-        case 1:         // Add node
-            Mutator::addNodeMutation(genome);
-            break;
-        case 2:         // Add connection
-            Mutator::addConnectionMutation(genome);
-            break;
-        case 3:         // Change weight
-            Mutator::changeWeightMutation(genome);
-            break;
-        default:
-            break;
-    }
-    return genome;
 }
 
 

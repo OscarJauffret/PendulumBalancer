@@ -19,8 +19,8 @@ public:
     ShapeInitializer() = default;
     ShapeInitializer(float yThreshold, Vector2f startPosition);
 
-    void initializeShapes(CircleShape &baseBall, CircleShape &tipBall, RectangleShape &track,
-                          RectangleShape &threshold, RectangleShape &bar);
+    void initializeShapes(CircleShape &baseBall, CircleShape &tipBall, RectangleShape &track, RectangleShape &threshold,
+                          RectangleShape &bar, RectangleShape &background, RectangleShape &controlledInfoBackground);
 
     static void initializeBall(CircleShape& ball, float radius, Color color, float outlineThickness, Color outlineColor, float positionX, float positionY);
     static void initializeRectangle(RectangleShape &rectangleShape, Vector2f size, Color fillColor, float outlineThickness, Color outlineColor, Vector2f position);

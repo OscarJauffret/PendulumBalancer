@@ -86,14 +86,20 @@ namespace config {
 
         namespace pendulum {
             constexpr float originX = window::width / 2;
-            constexpr float originY = 200.0f;
+            constexpr float originY = 400.0f;
+            constexpr float backgroundWidth = 900.0f;
+            constexpr float backgroundHeight = 300.0f;
+            constexpr float bgOutlineThickness = 3.0f;
+            constexpr float controlledInfoBgWidth = 120.0f;
+            constexpr float controlledInfoBgHeight = 40.0f;
         }
     }
 
     namespace score {
-        constexpr int timeLimit = 60;
-        constexpr float lengthThreshold = 0.2f;
+        constexpr int timeLimit = 30;
+        constexpr float lengthThreshold = 0.8f;
         constexpr float timeAboveThresholdToScore = 0.5f;
+        constexpr float yThreshold = layout::pendulum::originY - (pendulum::dimensions::length * lengthThreshold);
     }
 
     namespace colors {
@@ -105,7 +111,8 @@ namespace config {
             const Color ballOutlineColor = Color(255, 255, 255);
             const Color trackFillColor = Color::Transparent;
             const Color trackOutlineColor = Color(255, 255, 255);
-            [[maybe_unused]] const Color thresholdColor = Color(80, 80, 80);
+            const Color thresholdColor = Color(80, 80, 80);
+            const Color bgOutlineColor = Color(255, 255, 255);
         }
 
         namespace net {
@@ -121,12 +128,11 @@ namespace config {
 
         namespace layout {
             const Color backgroundColor = Color(80, 80, 80);
-            const Color scoreBackgroundColor = Color(50, 50, 50);
-            const Color generationBackgroundColor = Color(50, 50, 50);
+            const Color darkerBackgroundColor = Color(50, 50, 50);
             const Color scoreOutlineColor = Color(200, 98, 76);
             const Color generationOutlineColor = Color(255, 255, 255);
             const Color scoreLineColor = Color(200, 98, 76);
-            const Color inputRectColor = Color(80, 80, 80);
+            const Color controlledInfoBgColor = Color(39, 143, 39);
         }
     }
 
@@ -145,10 +151,20 @@ namespace config {
     }
 
     namespace genetic {
-        constexpr int populationSize = 100;
-        constexpr int batchSize = 10;
+        constexpr int populationSize = 150;
+        constexpr int batchSize = 15;
         constexpr int numberOfMutations = 4;
         constexpr float elitismRate = 0.25f;
+
+        namespace mut {
+            constexpr float newNodeProba = 0.1f;
+            constexpr float newConnectionProba = 0.8f;
+            constexpr float weightAndBiasMutRate = 0.25f;
+            constexpr float weightMutProportion = 0.5f;
+            constexpr float newValueProba = 0.2f;
+            constexpr float smallWeightRate = 0.01f;
+            constexpr float addValueProba = 0.25f;
+        }
     }
 }
 

@@ -9,18 +9,23 @@
 class Mutator {
 private:
     static int calculateNewNodeLayer(Genome &genome, const Node &fromNode, int toLayer);
-    static void initializeNewNodeAndConnections(Genome &genome, const Node &fromNode, const Node &toNode, int newNodeLayer);
-    static Connection getRandomConnection(Genome &genome);
+    static void
+    initializeNewNodeAndConnections(Genome &genome, int fromNodeId, int toNodeId, int newNodeLayer,
+                                    double previousWeight);
 
 public:
-    static void addNodeMutation(Genome &genome);
-    static void addConnectionMutation(Genome &genome);
-    static void changeWeightMutation(Genome &genome);
+    static Genome mutate(Genome &genome);
+
+    static void newNode(Genome &genome);
+    static void newConnection(Genome &genome);
+    static void mutateWeights(Genome &genome);
+    static void mutateBiases(Genome &genome);
 
     static bool connectionsExists(vector<Connection> &connections, int from, int to);
 
-    static Connection
-    getNewConnectionNodes(Genome &genome, vector<Node> &fromNodes, vector<Node> &toNodes);
+    static Connection getNewConnectionNodes(Genome &genome, vector<Node> &fromNodes, vector<Node> &toNodes);
+
+    template<typename TDataType> static TDataType& pickRandom(vector<TDataType> &vector);
 };
 
 

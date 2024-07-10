@@ -37,25 +37,20 @@ private:
     Font font;
 
 public:
-    Engine(RenderWindow &window, Time timePerFrame, bool shouldRenderPendulum, Mode mode,
-           Genome controllingAgent, int &fitness);
+    Engine(RenderWindow &window, Time timePerFrame, Mode mode, Genome controllingAgent, int &fitness,
+           bool shouldRenderPendulum, PendulumRenderer &pendRenderer);
 
     int input();
     int userInput();
     int AiInput();
 
     int run();
-
     void updatePendulum();
-
     float getInputValue(int inputId);
-
     void checkTipPosition();
-
     void incrementScore();
 
     void handleWindowClosed(const Event &event);
-
     int handleMovement();
 };
 

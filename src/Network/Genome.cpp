@@ -9,18 +9,21 @@ Genome::Genome(int inputSize, bool randomBiases, bool randomlyWeightedConnection
 
     for (int i = 0; i < inputSize; i++) {
         bias = RNG::randomFloatBetweenMinus1And1(randomBiases);
-        createNode(bias, Activation::None, 0);
+        createNode(bias, Activation::None, 0, -1);
     }
 
     bias = RNG::randomFloatBetweenMinus1And1(randomBiases);
-    createNode(bias, Activation::Tanh, -1);
+    createNode(bias, Activation::Tanh, -1, -1);
 
     addWeightedConnections(randomlyWeightedConnections);
     fitness = 0;
 }
 
-int Genome::createNode(float bias, Activation activation, int layer) {
-    Node node((int) nodes.size(), layer, bias, ActivationFunction::getFunction(activation));
+int Genome::createNode(float bias, Activation activation, int layer, int id) {
+    if (id == -1) {
+        id = nodes.size();
+    }
+    Node node(id, layer, bias, ActivationFunction::getFunction(activation));
     nodes.push_back(node);
     return node.id;
 }
@@ -74,7 +77,7 @@ int Genome::getDepth() {
     return maxDepth + 2;    // +1 for output layer, +1 for input layer, because output layer has a layer of -1
 }
 
-vector<Node> Genome::getNodes() {
+vector<Node> & Genome::getNodes() {
     return nodes;
 }
 
@@ -100,7 +103,7 @@ void Genome::addWeightedConnections(bool randomWeights) {
     }
 }
 
-vector<Connection> Genome::getConnections() {
+vector<Connection> & Genome::getConnections() {
     return connections;
 }
 
@@ -159,10 +162,38 @@ void Genome::setFitness(int fit) {
     this->fitness = fit;
 }
 
-int Genome::getFitness() {
+int Genome::getFitness() const {
     return fitness;
+}
+
+void Genome::setTrainingTime(unsigned long long int time) {
+    trainingTime = time;
+}
+
+unsigned long long int Genome::getTrainingTime() const {
+    return trainingTime;
+}
+
+double Genome::getConnectionWeight(int from, int to) {
+    for (Connection connection : connections) {
+        if (connection.from == from && connection.to == to) {
+            return connection.weight;
+        }
+    }
+    return 0.0;
+
 }
 
 void Genome::setConnectionWeight(int index, float weight) {
     connections[index].weight = weight;
+}
+
+float Genome::getNodeBias(int id) {
+    Node & node = getNode(id);
+    return node.bias;
+}
+
+void Genome::setNodeBias(int id, float bias) {
+    Node & node = getNode(id);
+    node.bias = bias;
 }

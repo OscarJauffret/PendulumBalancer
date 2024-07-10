@@ -5,6 +5,13 @@
 #include "headers/genome.h"
 #include "headers/randomnumbergenerator.hpp"
 
+float RNG::get() {
+    static random_device rd;
+    static mt19937 gen(rd());
+    static uniform_real_distribution<float> dis(0.0, 1.0);
+    return dis(gen);
+}
+
 float RNG::randomFloatBetweenMinus1And1(bool random) {
     if (!random) {
         return 0.0f;
@@ -26,4 +33,8 @@ int RNG::randomIntBetween(int min, int max) {
     uniform_int_distribution<int> dis(min, max);
     int random = dis(gen);
     return random;
+}
+
+bool RNG::proba(float probability) {
+    return get() < probability;
 }
