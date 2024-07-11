@@ -11,6 +11,7 @@ class RNG {
         static float get();
         static float randomFloatBetweenMinus1And1(bool random);
         static int randomIntBetween(int min, int max);
+        static float randomFloatBetween(float min, float max);
         static bool proba(float probability);
 };
 

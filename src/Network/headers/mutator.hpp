@@ -8,9 +8,9 @@
 
 class Mutator {
 private:
-    static int calculateNewNodeLayer(Genome &genome, const Node &fromNode, int toLayer);
+    static int calculateNewNodeLayer(Genome &genome, const int from, const int to);
     static void
-    initializeNewNodeAndConnections(Genome &genome, int fromNodeId, int toNodeId, int newNodeLayer,
+    initializeNewNodeAndConnections(Genome &genome, int from, int to, int newNodeLayer,
                                     double previousWeight);
 
 public:

@@ -99,8 +99,7 @@ string &Renderer::getGenomeButtonText(int g, const string &path, string &text) c
         text = "New genome";
     } else {
         Genome genome = GenomeJSonRepository::loadGenomeFromFile(path);
-        text = "Genome " + to_string(g) + " - Fitness: " + to_string(genome.getFitness()) + " - Training time: " +
-               formatTime(genome.getTrainingTime());
+        text = format("Genome {} - Fitness: {:.2f} - Training time {}", g, genome.getFitness(), formatTime(genome.getTrainingTime()));
     }
     return text;
 }
@@ -142,8 +141,7 @@ void Renderer::setNetworkGenome(Genome &genome) {
     networkRenderer.setGenome(genome);
 }
 
-void
-Renderer::draw(int generation, duration realTime, duration virtualTime, const vector<int> &scores, bool isControlled) {
+void Renderer::draw(int generation, duration realTime, duration virtualTime, const vector<float> &scores, bool isControlled) {
     window.clear(config::colors::layout::backgroundColor);
     pendulumRenderer.draw(window, font, isControlled);
     networkRenderer.draw(window);

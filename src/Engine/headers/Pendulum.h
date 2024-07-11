@@ -50,7 +50,7 @@ public:
     void checkCollision();
     void updatePosition(const Time &timePerFrame);
 
-    void draw(int fitness, int keyPressed, Mode mode);
+    void draw(float fitness, int keyPressed, Mode mode);
 
     [[nodiscard]] float getTipY() const;
 

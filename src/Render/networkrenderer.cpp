@@ -57,6 +57,7 @@ sf::RectangleShape NetworkRenderer::drawConnection(sf::Vector2f from, sf::Vector
     sf::Vector2f direction = to - from;
     float length = sqrt(pow(direction.x, 2) + pow(direction.y, 2));
     thickness *= config::netrender::maximumConnectionThickness;
+    thickness = std::max(config::netrender::minimumConnectionThickness, thickness);
 
     sf::RectangleShape connection(sf::Vector2f(length, thickness));
     connection.setFillColor(config::colors::net::connectionColor);

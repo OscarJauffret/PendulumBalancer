@@ -12,6 +12,7 @@
 #include "networkrenderer.h"
 #include <SFML/Graphics.hpp>
 #include <SFML/Window.hpp>
+#include <format>
 
 using namespace sf;
 using namespace std;
@@ -46,22 +47,22 @@ public:
     void drawGenerationBackground();
     static string formatTime(duration seconds);
 
-    void drawScoresChart(const vector<int> &scores);
+    void drawScoresChart(const vector<float> &scores);
     void drawScoresBackground();
     void drawScoresText();
     void drawScaleLines();
-    void drawScoresLines(vector<int> scores);
+    void drawScoresLines(vector<float> scores);
 
     Text getText(const string& text, int charSize, Color color, Vector2f position) const;
 
     void setNetworkGenome(Genome &genome);
-    void draw(int generation, duration realTime, duration virtualTime, const vector<int> &scores, bool isControlled);
+    void draw(int generation, duration realTime, duration virtualTime, const vector<float> &scores, bool isControlled);
 
-    vector<int> getLastScores(vector<int> &scores) const;
+    static vector<float> getLastScores(vector<float> &scores) ;
 
-    int getMaxScore(vector<int> &lastScores) const;
+    static float getMaxScore(vector<float> &lastScores) ;
 
-    RectangleShape initScoreBar(float x, int score) const;
+    static RectangleShape initScoreBar(float x, float score) ;
 };
 
 

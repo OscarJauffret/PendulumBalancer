@@ -158,11 +158,11 @@ Node & Genome::getNode(int id) {
     throw std::invalid_argument("Node with id " + std::to_string(id) + " not found");
 }
 
-void Genome::setFitness(int fit) {
+void Genome::setFitness(float fit) {
     this->fitness = fit;
 }
 
-int Genome::getFitness() const {
+float Genome::getFitness() const {
     return fitness;
 }
 
@@ -172,28 +172,4 @@ void Genome::setTrainingTime(unsigned long long int time) {
 
 unsigned long long int Genome::getTrainingTime() const {
     return trainingTime;
-}
-
-double Genome::getConnectionWeight(int from, int to) {
-    for (Connection connection : connections) {
-        if (connection.from == from && connection.to == to) {
-            return connection.weight;
-        }
-    }
-    return 0.0;
-
-}
-
-void Genome::setConnectionWeight(int index, float weight) {
-    connections[index].weight = weight;
-}
-
-float Genome::getNodeBias(int id) {
-    Node & node = getNode(id);
-    return node.bias;
-}
-
-void Genome::setNodeBias(int id, float bias) {
-    Node & node = getNode(id);
-    node.bias = bias;
 }

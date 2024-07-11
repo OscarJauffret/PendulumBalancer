@@ -26,8 +26,8 @@ private:
     float yThreshold;
     float timeAboveThreshold = 0;
 
-    int& fitness;
-    int maxPossibleScore = 0;
+    float& fitness;
+    int framesElapsed = 0;
 
     Pendulum pendulum;
 
@@ -37,18 +37,18 @@ private:
     Font font;
 
 public:
-    Engine(RenderWindow &window, Time timePerFrame, Mode mode, Genome controllingAgent, int &fitness,
+    Engine(RenderWindow &window, Time timePerFrame, Mode mode, Genome controllingAgent, float &fitness,
            bool shouldRenderPendulum, PendulumRenderer &pendRenderer);
 
     int input();
     int userInput();
     int AiInput();
 
-    int run();
+    float run(float accelerationFactor);
     void updatePendulum();
     float getInputValue(int inputId);
-    void checkTipPosition();
-    void incrementScore();
+    void checkTipPosition(float accelerationFactor);
+    void incrementFitness();
 
     void handleWindowClosed(const Event &event);
     int handleMovement();

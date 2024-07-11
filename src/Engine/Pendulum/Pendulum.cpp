@@ -85,7 +85,7 @@ void Pendulum::checkCollision() {
     }
 }
 
-void Pendulum::draw(int fitness, int keyPressed, Mode mode) {
+void Pendulum::draw(float fitness, int keyPressed, Mode mode) {
     if (render) {
         renderer.setPendulumInfo(barPosition, angle, tipBallPosition, fitness, keyPressed, mode);
     }

@@ -35,7 +35,7 @@ struct Connection {
 class Genome {
     vector<Node> nodes;
     vector<Connection> connections;
-    int fitness;
+    float fitness;
     unsigned long long int trainingTime = 0;
 
 public:
@@ -62,18 +62,11 @@ public:
     double predict(vector<float> inputs);
 
     float forward();
-    void setFitness(int fit);
-    [[nodiscard]] int getFitness() const;
+    void setFitness(float fit);
+    [[nodiscard]] float getFitness() const;
 
     void setTrainingTime(unsigned long long int time);
     [[nodiscard]] unsigned long long int getTrainingTime() const;
-
-    double getConnectionWeight(int from, int to);
-
-    void setConnectionWeight(int index, float weight);
-
-    float getNodeBias(int id);
-    void setNodeBias(int id, float bias);
 };
 
 #endif //PENDULUMBALANCERAI_GENOME_H

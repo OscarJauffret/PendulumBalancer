@@ -25,7 +25,7 @@ private:
     Vector2f barPosition;
     float angle;
     Vector2f tipBallPosition;
-    int fitness;
+    float fitness;
     int keyPressed;
     Mode mode;
 
@@ -34,7 +34,7 @@ public:
     explicit PendulumRenderer(float yThreshold, Vector2f startPosition);
     void initializeShapes(float yThreshold, Vector2f startPosition);
 
-    void setPendulumInfo(Vector2f barPos, float ang, Vector2f tipBallPos, int fit, int key, Mode m);
+    void setPendulumInfo(Vector2f barPos, float ang, Vector2f tipBallPos, float fit, int key, Mode m);
 
     Vector2f getBarPosition();
 

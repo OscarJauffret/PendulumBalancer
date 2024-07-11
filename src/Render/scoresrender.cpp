@@ -3,7 +3,7 @@
 //
 #include "headers/renderer.hpp"
 
-void Renderer::drawScoresChart(const vector<int> &scores) {
+void Renderer::drawScoresChart(const vector<float> &scores) {
     drawScoresBackground();
     drawScaleLines();
     drawScoresText();
@@ -46,22 +46,22 @@ void Renderer::drawScoresText() {
 
 }
 
-void Renderer::drawScoresLines(vector<int> scores) {
+void Renderer::drawScoresLines(vector<float> scores) {
     if (scores.empty()) {
         return;
     }
-    vector<int> lastScores = getLastScores(scores);
+    vector<float> lastScores = getLastScores(scores);
     float x = config::layout::score::originX + config::layout::score::spaceBetweenBars;
-    int maxScore = getMaxScore(lastScores);
-    int i = lastScores.size();
-    for (int score: lastScores) {
+    float maxScore = getMaxScore(lastScores);
+    size_t i = lastScores.size();
+    for (float score: lastScores) {
         float normalizedScore = static_cast<float>(score) / maxScore;
-        int height = normalizedScore * config::layout::score::height * 0.8f;
+        float height = normalizedScore * config::layout::score::height * 0.8f;
         RectangleShape line = initScoreBar(x, height);
         Text generationText = getText(to_string(scores.size() - i), 10, config::colors::textColor,
                                       Vector2<float>(x, config::layout::score::originY + config::layout::score::height - 5));
         generationText.setRotation(-90);
-        Text scoreText = getText(to_string(score), 10, config::colors::textColor,
+        Text scoreText = getText(format("{:.1f}", score), 10, config::colors::textColor,
                                  Vector2<float>(x, config::layout::score::originY + config::layout::score::height - height - 15));
         x += config::layout::score::barWidth + config::layout::score::spaceBetweenBars;
         i--;
@@ -71,25 +71,25 @@ void Renderer::drawScoresLines(vector<int> scores) {
     }
 }
 
-RectangleShape Renderer::initScoreBar(float x, int score) const {
+RectangleShape Renderer::initScoreBar(float x, float score) {
     RectangleShape line(Vector2<float>(config::layout::score::barWidth, score));
     line.setPosition(x, config::layout::score::originY + config::layout::score::height - score);
     line.setFillColor(config::colors::layout::scoreLineColor);
     return line;
 }
 
-int Renderer::getMaxScore(vector<int> &lastScores) const {
-    int maxScore = *max_element(lastScores.begin(), lastScores.end());
+float Renderer::getMaxScore(vector<float> &lastScores) {
+    float maxScore = *max_element(lastScores.begin(), lastScores.end());
     if (maxScore == 0) {
         maxScore = 1;
     }
     return maxScore;
 }
 
-vector<int> Renderer::getLastScores(vector<int> &scores) const {
-    vector<int> lastScores;
+vector<float> Renderer::getLastScores(vector<float> &scores) {
+    vector<float> lastScores;
     if (scores.size() > 10) {
-        lastScores = vector<int>(scores.end() - 10, scores.end());
+        lastScores = vector<float>(scores.end() - 10, scores.end());
     } else {
         lastScores = scores;
     }

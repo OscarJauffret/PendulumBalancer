@@ -8,7 +8,7 @@ nlohmann::json GenomeJSonRepository::saveGenome(Genome &genome) {
     json j;
     vector<Node> nodes = genome.getNodes();
     vector<Connection> connections = genome.getConnections();
-    int fitness = genome.getFitness();
+    float fitness = genome.getFitness();
     unsigned long long int trainingTime = genome.getTrainingTime();
 
     j["nodes"] = json::array();

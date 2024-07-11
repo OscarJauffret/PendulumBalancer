@@ -26,7 +26,7 @@ void Genetic::train() {
     while (window.isOpen()) {
         cout << "Generation: " << generation;
         population = selection();
-        cout << " Best fitness: " << population[0].getFitness() << endl;
+        cout << " Best fitness: " << round(population[0].getFitness()) << endl;
         scores.push_back(population[0].getFitness());
         renderer.setNetworkGenome(population[0]);
 
@@ -72,8 +72,8 @@ void Genetic::replayBestGenome() {
     promise<void> prom;
     future<void> fut = prom.get_future();
     thread([prom = std::move(prom), this]() mutable {
-        int fitness = 0;
-        trainAgent(population[0], fitness, true, renderer.getPendulumRenderer());
+        float fitness = 0;
+        trainAgent(population[0], fitness, true, renderer.getPendulumRenderer(), 1.0);
         prom.set_value();
     }).detach();
 
@@ -91,8 +91,8 @@ void Genetic::replayBestGenome() {
     }
 }
 
-int Genetic::calculateTotalFitness() {
-    int totalFitness = 0;
+float Genetic::calculateTotalFitness() {
+    float totalFitness = 0;
     for (Genome genome: population) {
         totalFitness += genome.getFitness();
     }
@@ -100,12 +100,12 @@ int Genetic::calculateTotalFitness() {
 }
 
 int Genetic::tournamentSelection() {
-    int totalFitness = calculateTotalFitness();
+    float totalFitness = calculateTotalFitness();
     if (totalFitness == 0) {
         return 0;
     }
-    int randomFitness = RNG::randomIntBetween(0, totalFitness - 1);
-    int currentFitness = 0;
+    float randomFitness = RNG::randomFloatBetween(0, totalFitness - 1);
+    float currentFitness = 0;
     int i = 0;
     for (Genome genome: population) {
         currentFitness += genome.getFitness();
@@ -125,8 +125,8 @@ vector<Genome> Genetic::trainAgents(vector<Genome> genomeBatch) {
         futures.push_back(prom.get_future());
 
         thread([&genome, this, prom = move(prom)]() mutable {
-            int fitness = 0;
-            trainAgent(genome, fitness, false, renderer.getPendulumRenderer());
+            float fitness = 0;
+            trainAgent(genome, fitness, false, renderer.getPendulumRenderer(), 5.0);
             genome.setFitness(fitness);
             prom.set_value();
         }).detach();
@@ -149,9 +149,10 @@ vector<Genome> Genetic::trainAgents(vector<Genome> genomeBatch) {
     return genomeBatch;
 }
 
-void Genetic::trainAgent(Genome genome, int &fitness, bool shouldRender, PendulumRenderer &pendulumRenderer) {
+void Genetic::trainAgent(Genome genome, float &fitness, bool shouldRender, PendulumRenderer &pendulumRenderer,
+                         float accelerationFactor) {
     Engine engine(window, timePerFrame, Mode::Ai, std::move(genome), fitness, shouldRender, pendulumRenderer);
-    engine.run();
+    engine.run(accelerationFactor);
 }
 
 void Genetic::initializePopulation(int populationSize, int inputSize) {

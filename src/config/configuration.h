@@ -144,6 +144,7 @@ namespace config {
         constexpr float nodeRadius = 10.0f;
         constexpr float nodeOutlineThickness = 3.0f;
         constexpr float maximumConnectionThickness = 10.0f;
+        constexpr float minimumConnectionThickness = 1.0f;
     }
 
     namespace net {

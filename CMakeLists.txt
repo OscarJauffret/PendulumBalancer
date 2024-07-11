@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 3.28)
 project(PendulumBalancerAI)
 
-set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_STANDARD 20)
 
 include_directories(C:/eigen-3.4.0/Eigen)
 
@@ -34,6 +34,7 @@ add_executable(PendulumBalancerAI src/main.cpp
         src/Network/headers/genomejsonrepository.hpp
         src/Render/generationrender.cpp
         src/Render/scoresrender.cpp
+        src/Network/headers/ThreadPool.hpp
 )
 
 set(CMAKE_PREFIX_PATH "C:/SFML-2.6.1")

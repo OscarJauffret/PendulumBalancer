@@ -57,31 +57,31 @@ void Mutator::mutateBiases(Genome &genome) {
 
 void Mutator::newNode(Genome &genome) {
     Connection &connection = pickRandom(genome.getConnections());
-    Node &fromNode = genome.getNode(connection.from);
-    Node &toNode = genome.getNode(connection.to);
-    int toLayer = genome.checkIfLayerIsLast(toNode.layer);
-    int newNodeLayer = calculateNewNodeLayer(genome, fromNode, toLayer);
+    int from = connection.from;
+    int to = connection.to;
+    to = genome.checkIfLayerIsLast(to);
+    int newNodeLayer = calculateNewNodeLayer(genome, from, to);
     double weight = connection.weight;
-    initializeNewNodeAndConnections(genome, fromNode.id, toNode.id, newNodeLayer, weight);
+    initializeNewNodeAndConnections(genome, from, to, newNodeLayer, weight);
 }
 
-int Mutator::calculateNewNodeLayer(Genome &genome, const Node &fromNode, int toLayer) {
-    bool roomForNode = Genome::checkIfRoomForNode(fromNode.layer, toLayer);
+int Mutator::calculateNewNodeLayer(Genome &genome, const int from, const int to) {
+    bool roomForNode = Genome::checkIfRoomForNode(from, to);
     int newNodeLayer;
     if (roomForNode) {
-        newNodeLayer = RNG::randomIntBetween(fromNode.layer + 1, toLayer - 1);
+        newNodeLayer = RNG::randomIntBetween(from + 1, to - 1);
     } else {
-        newNodeLayer = toLayer;
-        genome.updateLayersAfter(toLayer);
+        newNodeLayer = to;
+        genome.updateLayersAfter(to);
     }
     return newNodeLayer;
 }
 
-void Mutator::initializeNewNodeAndConnections(Genome &genome, int fromNodeId, int toNodeId, int newNodeLayer, double previousWeight) {
+void Mutator::initializeNewNodeAndConnections(Genome &genome, int from, int to, int newNodeLayer, double previousWeight) {
+    genome.removeConnection(from, to);
     int nodeId = genome.createNode(RNG::randomFloatBetweenMinus1And1(true), Activation::Relu, newNodeLayer, -1);
-    genome.addConnection(previousWeight, fromNodeId, nodeId);
-    genome.addConnection(1.0f, nodeId, toNodeId);
-    genome.removeConnection(fromNodeId, toNodeId);  // Remove old connection (from -> to)
+    genome.addConnection(previousWeight, from, nodeId);
+    genome.addConnection(1.0f, nodeId, to);
 }
 
 void Mutator::newConnection(Genome &genome) {

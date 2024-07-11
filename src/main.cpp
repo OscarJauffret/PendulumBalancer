@@ -25,10 +25,10 @@ void launchGame(Renderer &renderer) {
         return;
     }
     if (mode == Mode::Manual) {
-        int fitness = 0;
+        float fitness = 0;
         Engine engine(renderer.getWindow(), renderer.getTimePerFrame(), mode, Genome(0, false, false), fitness, true,
                       pendulumRenderer);
-        engine.run();
+        engine.run(1.0);
     } else {
         Genetic genetic(renderer, genomePath);
         genetic.train();

@@ -8,7 +8,7 @@
 
 
 
-Engine::Engine(RenderWindow &window, Time timePerFrame, Mode mode, Genome controllingAgent, int &fitness,
+Engine::Engine(RenderWindow &window, Time timePerFrame, Mode mode, Genome controllingAgent, float &fitness,
                bool shouldRenderPendulum, PendulumRenderer &pendRenderer)
         : window(window),
           yThreshold(config::score::yThreshold),
@@ -25,13 +25,14 @@ void Engine::updatePendulum() {
     pendulum.update(timePerFrame);
 }
 
-int Engine::run() {
+float Engine::run(float accelerationFactor) {
     clock.restart();
     timeSinceLastUpdate = Time::Zero;
     int key = 0;
 
-    while (window.isOpen() && maxPossibleScore < config::score::timeLimit * config::window::fps) {
+    while (window.isOpen() && framesElapsed < config::score::timeLimit * config::window::fps) {
         Time dt = clock.restart();
+        dt *= accelerationFactor;
         timeSinceLastUpdate += dt;
 
         while (timeSinceLastUpdate > timePerFrame) {
@@ -40,8 +41,9 @@ int Engine::run() {
             key = input();
             updatePendulum();
 
-            checkTipPosition();
-            incrementScore();
+            checkTipPosition(accelerationFactor);
+            incrementFitness();
+            framesElapsed++;
         }
 
         pendulum.draw(fitness, key, mode);
@@ -49,20 +51,20 @@ int Engine::run() {
     return fitness;
 }
 
-void Engine::checkTipPosition() {
+void Engine::checkTipPosition(float accelerationFactor) {
+    const float adjustedTimePerFrame = timePerFrame.asSeconds() * accelerationFactor;
     if (pendulum.getTipY() < yThreshold) {
-        timeAboveThreshold += timePerFrame.asSeconds();
+        timeAboveThreshold += adjustedTimePerFrame;
     } else {
         timeAboveThreshold = 0;
     }
 }
 
-void Engine::incrementScore() {
+void Engine::incrementFitness() {
     if (timeAboveThreshold > config::score::timeAboveThresholdToScore) {
-        fitness++;
+        fitness += 1.0f / (abs(pendulum.getAngularVelocity()) + 1);
         timeAboveThreshold = 0;
     }
-    maxPossibleScore++;
 }
 
 float Engine::getInputValue(int inputId) {

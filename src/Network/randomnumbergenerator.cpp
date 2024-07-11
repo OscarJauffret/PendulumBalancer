@@ -35,6 +35,18 @@ int RNG::randomIntBetween(int min, int max) {
     return random;
 }
 
+float RNG::randomFloatBetween(float min, float max) {
+    if (min > max) {
+        throw std::invalid_argument("min should not be greater than max");
+    } else if (min == max) {
+        return min;
+    }
+    static random_device rd;
+    static mt19937 gen(rd());
+    uniform_real_distribution<float> dis(min, max);
+    return dis(gen);
+}
+
 bool RNG::proba(float probability) {
     return get() < probability;
 }

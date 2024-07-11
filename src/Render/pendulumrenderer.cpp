@@ -2,6 +2,7 @@
 // Created by oscar on 07/07/2024.
 //
 
+#include <format>
 #include "headers/pendulumrenderer.hpp"
 #include "headers/shapeinitializer.hpp"
 
@@ -50,7 +51,7 @@ void PendulumRenderer::drawPendulum(RenderWindow &window) {
 void PendulumRenderer::drawScore(RenderWindow &window, Font &font) const {
     sf::Text score_text;
     score_text.setFont(font);
-    score_text.setString("Score: " + std::to_string(fitness));
+    score_text.setString("Score: " + std::format("{:.2f}", fitness));
     score_text.setCharacterSize(30);
     score_text.setFillColor(Color::White);
     const float xPadding = 10;
@@ -83,7 +84,7 @@ void PendulumRenderer::drawInputs(RenderWindow &window, Font &font) {
     window.draw(input_text);
 }
 
-void PendulumRenderer::setPendulumInfo(Vector2f barPos, float ang, Vector2f tipBallPos, int fit,
+void PendulumRenderer::setPendulumInfo(Vector2f barPos, float ang, Vector2f tipBallPos, float fit,
                                        int key, Mode m) {
     this->barPosition = barPos;
     this->angle = ang;

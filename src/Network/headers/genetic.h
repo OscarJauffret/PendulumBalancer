@@ -23,7 +23,7 @@ using namespace std::chrono;
 
 class Genetic {
     int generation = 0;
-    vector<int> scores = {};
+    vector<float> scores = {};
     long long int duration;
     long long int lastDuration;
 
@@ -36,14 +36,15 @@ public:
     Genetic(class Renderer &renderer, const string& startingGenomePath);
     void train();
     vector<Genome> trainAgents(vector<Genome> genomeBatch);
-    void trainAgent(Genome genome, int &fitness, bool shouldRender, PendulumRenderer &pendulumRenderer);
+    void trainAgent(Genome genome, float &fitness, bool shouldRender, PendulumRenderer &pendulumRenderer,
+                    float accelerationFactor);
     void replayBestGenome();
 
     void initializePopulation(int populationSize, int inputSize);
     vector<Genome> selection();
 
     vector<Genome> initializeNewPopulationWithElites();
-    int calculateTotalFitness();
+    float calculateTotalFitness();
     int tournamentSelection();
 
     void render(bool isControlled);
