@@ -4,7 +4,7 @@
 
 #include "headers/mutator.hpp"
 
-Genome Mutator::mutate(Genome &genome) {
+void Mutator::mutate(Genome &genome) {
     int numMutations = config::genetic::numberOfMutations;
     for (int i = 0; i < numMutations; i++) {
         if (RNG::proba(config::genetic::mut::weightAndBiasMutRate)) {
@@ -22,8 +22,6 @@ Genome Mutator::mutate(Genome &genome) {
     if (RNG::proba(config::genetic::mut::newConnectionProba)) {
         newConnection(genome);
     }
-
-    return genome;
 }
 
 void Mutator::mutateWeights(Genome &genome) {
@@ -59,20 +57,22 @@ void Mutator::newNode(Genome &genome) {
     Connection &connection = pickRandom(genome.getConnections());
     int from = connection.from;
     int to = connection.to;
-    to = genome.checkIfLayerIsLast(to);
-    int newNodeLayer = calculateNewNodeLayer(genome, from, to);
+    int fromLayer = genome.getNode(from).layer;
+    int toLayer = genome.getNode(to).layer;
+    toLayer = genome.checkIfLayerIsLast(toLayer);
+    int newNodeLayer = calculateNewNodeLayer(genome, fromLayer, toLayer);
     double weight = connection.weight;
     initializeNewNodeAndConnections(genome, from, to, newNodeLayer, weight);
 }
 
-int Mutator::calculateNewNodeLayer(Genome &genome, const int from, const int to) {
-    bool roomForNode = Genome::checkIfRoomForNode(from, to);
+int Mutator::calculateNewNodeLayer(Genome &genome, const int fromLayer, const int toLayer) {
+    bool roomForNode = Genome::checkIfRoomForNode(fromLayer, toLayer);
     int newNodeLayer;
     if (roomForNode) {
-        newNodeLayer = RNG::randomIntBetween(from + 1, to - 1);
+        newNodeLayer = RNG::randomIntBetween(fromLayer + 1, toLayer - 1);
     } else {
-        newNodeLayer = to;
-        genome.updateLayersAfter(to);
+        newNodeLayer = toLayer;
+        genome.updateLayersAfter(toLayer);
     }
     return newNodeLayer;
 }

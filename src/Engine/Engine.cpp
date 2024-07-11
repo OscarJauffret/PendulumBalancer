@@ -29,30 +29,37 @@ float Engine::run(float accelerationFactor) {
     clock.restart();
     timeSinceLastUpdate = Time::Zero;
     int key = 0;
+    framesElapsed = 0;
 
     while (window.isOpen() && framesElapsed < config::score::timeLimit * config::window::fps) {
-        Time dt = clock.restart();
+        Time dt = clock.restart();  // Restart the clock and return the time elapsed since the last restart
         dt *= accelerationFactor;
         timeSinceLastUpdate += dt;
 
         while (timeSinceLastUpdate > timePerFrame) {
+            if (framesElapsed >= config::score::timeLimit * config::window::fps) {
+                break;
+            }
             timeSinceLastUpdate -= timePerFrame;
 
             key = input();
             updatePendulum();
 
-            checkTipPosition(accelerationFactor);
+            checkTipPosition();
             incrementFitness();
             framesElapsed++;
         }
 
         pendulum.draw(fitness, key, mode);
     }
+    if (framesElapsed != 1800) {
+        cout << "Agent played for " << framesElapsed << " frames" << endl;
+    }
     return fitness;
 }
 
-void Engine::checkTipPosition(float accelerationFactor) {
-    const float adjustedTimePerFrame = timePerFrame.asSeconds() * accelerationFactor;
+void Engine::checkTipPosition() {
+    const float adjustedTimePerFrame = timePerFrame.asSeconds();
     if (pendulum.getTipY() < yThreshold) {
         timeAboveThreshold += adjustedTimePerFrame;
     } else {
@@ -62,7 +69,10 @@ void Engine::checkTipPosition(float accelerationFactor) {
 
 void Engine::incrementFitness() {
     if (timeAboveThreshold > config::score::timeAboveThresholdToScore) {
-        fitness += 1.0f / (abs(pendulum.getAngularVelocity()) + 1);
+        float distanceFromCenter = abs(pendulum.getPosition()) / (config::pendulum::dimensions::trackWidth / 2);
+        float positionFactor = 1.0f/(distanceFromCenter + 1);
+        float velocityFactor = 1.0f/(abs(pendulum.getAngularVelocity()) + 1);
+        fitness += positionFactor * velocityFactor;
         timeAboveThreshold = 0;
     }
 }

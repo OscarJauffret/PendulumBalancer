@@ -8,9 +8,11 @@
 #include <SFML/Graphics.hpp>
 #include <string>
 #include <iostream>
+#include <thread>
 using std::string;
 using sf::Color;
 using std::cout; using std::endl;
+using std::thread;
 
 #define M_PI 3.14159265358979323846
 #define M_PHI 1.61803398874989484820
@@ -93,6 +95,15 @@ namespace config {
             constexpr float controlledInfoBgWidth = 120.0f;
             constexpr float controlledInfoBgHeight = 40.0f;
         }
+
+        namespace info {
+            constexpr float originX = generation::originX;
+            constexpr float originY = generation::originY + generation::height + 10.0f;
+            constexpr float width = generation::width;
+            constexpr float height = 50.0f;
+            constexpr float bgOutlineThickness = 3.0f;
+            constexpr float widgetRadius = 5.0f;
+        }
     }
 
     namespace score {
@@ -133,6 +144,9 @@ namespace config {
             const Color generationOutlineColor = Color(255, 255, 255);
             const Color scoreLineColor = Color(200, 98, 76);
             const Color controlledInfoBgColor = Color(39, 143, 39);
+            const Color infoOutlineColor = Color(255, 255, 255);
+            const Color activatedWidgetColor = Color(136, 209, 138);
+            const Color deactivatedWidgetColor = Color(255, 116, 119);
         }
     }
 
@@ -152,13 +166,14 @@ namespace config {
     }
 
     namespace genetic {
-        constexpr int populationSize = 150;
-        constexpr int batchSize = 15;
-        constexpr int numberOfMutations = 4;
+        constexpr int populationSize = 1000;
+        constexpr int numberOfMutations = 3;
         constexpr float elitismRate = 0.25f;
+        const size_t numThreads = thread::hardware_concurrency();
+        constexpr float gameAccelerationFactor = 200.0f;
 
         namespace mut {
-            constexpr float newNodeProba = 0.1f;
+            constexpr float newNodeProba = 0.05f;
             constexpr float newConnectionProba = 0.8f;
             constexpr float weightAndBiasMutRate = 0.25f;
             constexpr float weightMutProportion = 0.5f;

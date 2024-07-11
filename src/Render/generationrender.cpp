@@ -11,11 +11,11 @@ void Renderer::drawGeneration(int generation, duration elapsedTime, duration vir
 }
 
 void Renderer::drawGenerationBackground() {
-    RectangleShape background(Vector2f(config::layout::generation::width, config::layout::generation::height));
-    background.setPosition(config::layout::generation::originX, config::layout::generation::originY);
-    background.setFillColor(config::colors::layout::darkerBackgroundColor);
-    background.setOutlineThickness(config::layout::generation::bgOutlineThickness);
-    background.setOutlineColor(config::colors::layout::generationOutlineColor);
+    RectangleShape background = Card::make(Vector2f(config::layout::generation::originX, config::layout::generation::originY),
+                                          Vector2f(config::layout::generation::width, config::layout::generation::height),
+                                          config::colors::layout::darkerBackgroundColor,
+                                          config::layout::generation::bgOutlineThickness,
+                                          config::colors::layout::generationOutlineColor);
     window.draw(background);
 }
 

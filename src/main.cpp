@@ -50,7 +50,7 @@ void launchNetwork(RenderWindow &window) {
             }
             if (event.type == Event::KeyPressed) {
                 if (event.key.code == Keyboard::Space) {
-                    genome = Mutator::mutate(genome);
+                    Mutator::mutate(genome);
                     drawer.setGenome(genome);
                 }
             }

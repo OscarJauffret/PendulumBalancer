@@ -67,6 +67,8 @@ public:
 
     void setTrainingTime(unsigned long long int time);
     [[nodiscard]] unsigned long long int getTrainingTime() const;
+
+    friend ostream & operator<<(ostream &os, const Genome &genome);
 };
 
 #endif //PENDULUMBALANCERAI_GENOME_H

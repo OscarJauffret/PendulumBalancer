@@ -47,7 +47,7 @@ public:
     float run(float accelerationFactor);
     void updatePendulum();
     float getInputValue(int inputId);
-    void checkTipPosition(float accelerationFactor);
+    void checkTipPosition();
     void incrementFitness();
 
     void handleWindowClosed(const Event &event);

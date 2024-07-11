@@ -8,13 +8,13 @@
 
 class Mutator {
 private:
-    static int calculateNewNodeLayer(Genome &genome, const int from, const int to);
+    static int calculateNewNodeLayer(Genome &genome, const int fromLayer, const int toLayer);
     static void
     initializeNewNodeAndConnections(Genome &genome, int from, int to, int newNodeLayer,
                                     double previousWeight);
 
 public:
-    static Genome mutate(Genome &genome);
+    static void mutate(Genome &genome);
 
     static void newNode(Genome &genome);
     static void newConnection(Genome &genome);

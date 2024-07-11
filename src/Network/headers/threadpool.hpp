@@ -13,17 +13,9 @@
 #include <functional>
 #include <future>
 
-#include <vector>
-#include <thread>
-#include <queue>
-#include <mutex>
-#include <condition_variable>
-#include <functional>
-#include <future>
-
 class ThreadPool {
 public:
-    ThreadPool(size_t numThreads);
+    explicit ThreadPool(size_t numThreads);
     ~ThreadPool();
 
     template<class F, class... Args>

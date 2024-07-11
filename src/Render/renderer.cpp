@@ -4,7 +4,7 @@
 
 #include "headers/renderer.hpp"
 
-const Time Renderer::timePerFrame = seconds(1.f / config::window::fps);
+const Time Renderer::timePerFrame = seconds(1.0f / config::window::fps);
 
 Renderer::Renderer(PendulumRenderer &pendRenderer, NetworkRenderer &netRenderer)
 : resolution(config::window::width,config::window::height),
@@ -141,11 +141,16 @@ void Renderer::setNetworkGenome(Genome &genome) {
     networkRenderer.setGenome(genome);
 }
 
-void Renderer::draw(int generation, duration realTime, duration virtualTime, const vector<float> &scores, bool isControlled) {
+void
+Renderer::draw(int generation, duration realTime, duration virtualTime, const vector<float> &scores, bool isControlled,
+               bool showBest) {
     window.clear(config::colors::layout::backgroundColor);
     pendulumRenderer.draw(window, font, isControlled);
     networkRenderer.draw(window);
     drawGeneration(generation, realTime, virtualTime);
     drawScoresChart(scores);
+    drawInfoPanel(showBest);
     window.display();
 }
+
+

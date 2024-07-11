@@ -173,3 +173,14 @@ void Genome::setTrainingTime(unsigned long long int time) {
 unsigned long long int Genome::getTrainingTime() const {
     return trainingTime;
 }
+
+ostream &operator<<(ostream &os, const Genome &genome) {
+    for (const Node &node : genome.nodes) {
+        os << "Node " << node.id << " with bias " << node.bias << " and layer " << node.layer << endl;
+    }
+    for (const Connection &connection : genome.connections) {
+        os << "Connection from " << connection.from << " to " << connection.to << " with weight " << connection.weight << endl;
+    }
+    os << "Genome with fitness " << genome.fitness << " and " << genome.nodes.size() << " nodes and " << genome.connections.size() << " connections";
+    return os;
+}

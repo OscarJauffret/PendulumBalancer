@@ -11,6 +11,7 @@
 #include "../../Render/headers/networkrenderer.h"
 #include "../../Render/headers/renderer.hpp"
 #include "genomejsonrepository.hpp"
+#include "threadpool.hpp"
 #include <vector>
 #include <algorithm>
 #include <thread>
@@ -24,18 +25,22 @@ using namespace std::chrono;
 class Genetic {
     int generation = 0;
     vector<float> scores = {};
-    long long int duration;
-    long long int lastDuration;
+    unsigned long long int duration;
+    unsigned long long int lastDuration;
 
     vector<Genome> population;
     RenderWindow& window;
     Time timePerFrame;
     Renderer& renderer;
 
+    ThreadPool pool;
+    bool showBest = false;
+    bool stop = false;
+
 public:
     Genetic(class Renderer &renderer, const string& startingGenomePath);
     void train();
-    vector<Genome> trainAgents(vector<Genome> genomeBatch);
+    vector<Genome> trainAgents(vector<Genome> pop);
     void trainAgent(Genome genome, float &fitness, bool shouldRender, PendulumRenderer &pendulumRenderer,
                     float accelerationFactor);
     void replayBestGenome();

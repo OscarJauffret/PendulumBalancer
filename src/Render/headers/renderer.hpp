@@ -10,6 +10,7 @@
 #include "button.hpp"
 #include "pendulumrenderer.hpp"
 #include "networkrenderer.h"
+#include "card.hpp"
 #include <SFML/Graphics.hpp>
 #include <SFML/Window.hpp>
 #include <format>
@@ -56,13 +57,17 @@ public:
     Text getText(const string& text, int charSize, Color color, Vector2f position) const;
 
     void setNetworkGenome(Genome &genome);
-    void draw(int generation, duration realTime, duration virtualTime, const vector<float> &scores, bool isControlled);
+    void draw(int generation, duration realTime, duration virtualTime, const vector<float> &scores, bool isControlled,
+              bool showBest);
 
     static vector<float> getLastScores(vector<float> &scores) ;
-
     static float getMaxScore(vector<float> &lastScores) ;
-
     static RectangleShape initScoreBar(float x, float score) ;
+
+    void drawInfoPanel(bool showBest);
+    void drawInfoBackground();
+    void drawInfoText();
+    void drawInfoWidget(bool showBest);
 };
 
 

@@ -11,11 +11,11 @@ void Renderer::drawScoresChart(const vector<float> &scores) {
 }
 
 void Renderer::drawScoresBackground() {
-    RectangleShape background(Vector2<float>(config::layout::score::width, config::layout::score::height));
-    background.setPosition(config::layout::score::originX, config::layout::score::originY);
-    background.setOutlineThickness(config::layout::score::bgOutlineThickness);
-    background.setOutlineColor(config::colors::layout::scoreOutlineColor);
-    background.setFillColor(config::colors::layout::darkerBackgroundColor);
+    RectangleShape background = Card::make(Vector2f(config::layout::score::originX, config::layout::score::originY),
+                                           Vector2f(config::layout::score::width, config::layout::score::height),
+                                           config::colors::layout::darkerBackgroundColor,
+                                           config::layout::score::bgOutlineThickness,
+                                           config::colors::layout::scoreOutlineColor);
     window.draw(background);
 }
 
@@ -59,10 +59,11 @@ void Renderer::drawScoresLines(vector<float> scores) {
         float height = normalizedScore * config::layout::score::height * 0.8f;
         RectangleShape line = initScoreBar(x, height);
         Text generationText = getText(to_string(scores.size() - i), 10, config::colors::textColor,
-                                      Vector2<float>(x, config::layout::score::originY + config::layout::score::height - 5));
+                                      Vector2<float>(x + 2, config::layout::score::originY + config::layout::score::height - 5));
         generationText.setRotation(-90);
-        Text scoreText = getText(format("{:.1f}", score), 10, config::colors::textColor,
-                                 Vector2<float>(x, config::layout::score::originY + config::layout::score::height - height - 15));
+        Text scoreText = getText(format("{:.2f}", score), 10, config::colors::textColor,
+                                 Vector2<float>(x + 2, config::layout::score::originY + config::layout::score::height - height - 5));
+        scoreText.setRotation(-90);
         x += config::layout::score::barWidth + config::layout::score::spaceBetweenBars;
         i--;
         window.draw(line);

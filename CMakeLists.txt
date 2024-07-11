@@ -34,7 +34,9 @@ add_executable(PendulumBalancerAI src/main.cpp
         src/Network/headers/genomejsonrepository.hpp
         src/Render/generationrender.cpp
         src/Render/scoresrender.cpp
-        src/Network/headers/ThreadPool.hpp
+        src/Network/headers/threadpool.hpp
+        src/Render/headers/card.hpp
+        src/Render/inforender.cpp
 )
 
 set(CMAKE_PREFIX_PATH "C:/SFML-2.6.1")

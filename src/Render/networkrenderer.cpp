@@ -14,6 +14,7 @@ void NetworkRenderer::setGenome(const Genome &gen) {
 
 void NetworkRenderer::calculateNodesPositions() {
     int depth = genome.getDepth();
+    nodesPositions.clear();
     float xSpacing = (float) allowedSpace.x / (float) (depth + 1);
     for (int i = 0; i < depth; i++) {
         std::vector<Node> nodes = genome.getNodesInLayer(i);
