@@ -60,6 +60,8 @@ public:
     [[nodiscard]] float getAngleSin() const;
     [[nodiscard]] float getAcceleration() const;
     [[nodiscard]] float getVelocity() const;
+
+    void askToRender(RenderWindow &window);
 };
 
 

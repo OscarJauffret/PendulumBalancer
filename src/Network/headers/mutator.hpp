@@ -14,7 +14,7 @@ private:
                                     double previousWeight);
 
 public:
-    static void mutate(Genome &genome);
+    static void mutate(Genome &genome, int generationsSinceLastImprovement);
 
     static void newNode(Genome &genome);
     static void newConnection(Genome &genome);

@@ -47,7 +47,7 @@ namespace config {
         constexpr float startVelocity = 0.0f;
         constexpr float startAcceleration = 0.0f;
 
-        constexpr float acceleration = 500.0f;
+        constexpr float acceleration = 1500.0f;
 
         namespace dimensions {
             constexpr float length = 100.0f;
@@ -74,7 +74,7 @@ namespace config {
             constexpr float width = 300.0f;
             constexpr float height = 300.0f;
             constexpr float barWidth = 15.0f;
-            constexpr float spaceBetweenBars = 5.0f;
+            constexpr float spaceBetweenBars = 2.0f;
             constexpr float bgOutlineThickness = 3.0f;
         }
 
@@ -94,6 +94,15 @@ namespace config {
             constexpr float bgOutlineThickness = 3.0f;
             constexpr float controlledInfoBgWidth = 120.0f;
             constexpr float controlledInfoBgHeight = 40.0f;
+
+            namespace accel {
+                constexpr float originX = score::originX + score::width + 10.0f;
+                constexpr float originY = score::originY;
+                constexpr float width = 600.0f;
+                constexpr float height = 300.0f;
+                constexpr float bgOutlineThickness = score::bgOutlineThickness;
+                constexpr float rightPadding = 50.0f;
+            }
         }
 
         namespace info {
@@ -107,9 +116,9 @@ namespace config {
     }
 
     namespace score {
-        constexpr int timeLimit = 30;
+        constexpr int timeLimit = 60;
         constexpr float lengthThreshold = 0.8f;
-        constexpr float timeAboveThresholdToScore = 0.5f;
+        constexpr float timeAboveThresholdToScore = 1.0f;
         constexpr float yThreshold = layout::pendulum::originY - (pendulum::dimensions::length * lengthThreshold);
     }
 
@@ -147,6 +156,7 @@ namespace config {
             const Color infoOutlineColor = Color(255, 255, 255);
             const Color activatedWidgetColor = Color(136, 209, 138);
             const Color deactivatedWidgetColor = Color(255, 116, 119);
+            const Color accelChartOutlineColor = Color(66, 149, 245);
         }
     }
 
@@ -162,18 +172,18 @@ namespace config {
     }
 
     namespace net {
-        constexpr int inputSize = 6;
+        constexpr int inputSize = 5;
     }
 
     namespace genetic {
-        constexpr int populationSize = 1000;
-        constexpr int numberOfMutations = 3;
+        constexpr int populationSize = 1120;
+        constexpr int numberOfMutations = 6;
         constexpr float elitismRate = 0.25f;
         const size_t numThreads = thread::hardware_concurrency();
         constexpr float gameAccelerationFactor = 200.0f;
 
         namespace mut {
-            constexpr float newNodeProba = 0.05f;
+            constexpr float newNodeProba = 0.2f;
             constexpr float newConnectionProba = 0.8f;
             constexpr float weightAndBiasMutRate = 0.25f;
             constexpr float weightMutProportion = 0.5f;

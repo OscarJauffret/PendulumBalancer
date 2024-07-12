@@ -18,18 +18,18 @@ int main() {
 
 void launchGame(Renderer &renderer) {
     Mode mode = renderer.askMode();
-    string genomePath = renderer.askGenomePath();
     pendulumRenderer.initializeShapes(config::score::yThreshold, Vector2f(config::layout::pendulum::originX,
                                                                          config::layout::pendulum::originY));
-    if (genomePath == "close") {
-        return;
-    }
     if (mode == Mode::Manual) {
         float fitness = 0;
         Engine engine(renderer.getWindow(), renderer.getTimePerFrame(), mode, Genome(0, false, false), fitness, true,
                       pendulumRenderer);
         engine.run(1.0);
     } else {
+        string genomePath = renderer.askGenomePath();
+        if (genomePath == "close") {
+            return;
+        }
         Genetic genetic(renderer, genomePath);
         genetic.train();
     }
@@ -50,7 +50,7 @@ void launchNetwork(RenderWindow &window) {
             }
             if (event.type == Event::KeyPressed) {
                 if (event.key.code == Keyboard::Space) {
-                    Mutator::mutate(genome);
+                    Mutator::mutate(genome, 0);
                     drawer.setGenome(genome);
                 }
             }

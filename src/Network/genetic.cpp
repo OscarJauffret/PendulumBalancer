@@ -33,6 +33,12 @@ void Genetic::train() {
         scores.push_back(population[0].getFitness());
         renderer.setNetworkGenome(population[0]);
 
+        if ((scores.size() >= 2) && (scores.back() > scores[scores.size() - 2])) {
+            generationsSinceLastImprovement = 0;
+        } else {
+            generationsSinceLastImprovement++;
+        }
+
         auto now = chrono::high_resolution_clock::now();
         duration = duration_cast<chrono::seconds>(now - start).count();
         generation++;
@@ -46,7 +52,7 @@ void Genetic::train() {
         vector<Genome> newPopulation = initializeNewPopulationWithElites();
         while (newPopulation.size() < config::genetic::populationSize) {
             newPopulation.push_back(population[tournamentSelection()]);
-            Mutator::mutate(newPopulation.back());
+            Mutator::mutate(newPopulation.back(), generationsSinceLastImprovement);
         }
         population = newPopulation;
     }
@@ -112,6 +118,30 @@ float Genetic::calculateTotalFitness() {
 }
 
 int Genetic::tournamentSelection() {
+    const int tournamentSize = 3; // Taille du tournoi, ajustez selon vos besoins
+    vector<int> tournamentParticipants;
+
+    // Sélectionner `tournamentSize` participants aléatoires
+    for (int i = 0; i < tournamentSize; ++i) {
+        int randomIndex = selectRandomGenomeBasedOnFitness();
+        tournamentParticipants.push_back(randomIndex);
+    }
+
+    // Trouver le meilleur participant dans le tournoi
+    int bestParticipant = tournamentParticipants[0];
+    float bestFitness = population[tournamentParticipants[0]].getFitness();
+    for (int i = 1; i < tournamentParticipants.size(); ++i) {
+        int participantIndex = tournamentParticipants[i];
+        float participantFitness = population[participantIndex].getFitness();
+        if (participantFitness > bestFitness) {
+            bestParticipant = participantIndex;
+            bestFitness = participantFitness;
+        }
+    }
+    return bestParticipant;
+}
+
+int Genetic::selectRandomGenomeBasedOnFitness() {
     float totalFitness = calculateTotalFitness();
     if (totalFitness == 0) {
         return 0;
@@ -128,6 +158,7 @@ int Genetic::tournamentSelection() {
     }
     return 0;
 }
+
 
 vector<Genome> Genetic::trainAgents(vector<Genome> pop) {
     vector<std::future<void>> futures;

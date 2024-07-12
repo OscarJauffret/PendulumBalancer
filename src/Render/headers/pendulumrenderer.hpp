@@ -6,8 +6,10 @@
 #define PENDULUMBALANCERAI_PENDULUMRENDERER_HPP
 #include "../../config/configuration.h"
 #include "shapeinitializer.hpp"
+#include "card.hpp"
 #include <SFML/Graphics.hpp>
 #include <SFML/Window.hpp>
+#include <deque>
 using namespace sf;
 using std::cerr; using std::endl;
 
@@ -29,22 +31,31 @@ private:
     int keyPressed;
     Mode mode;
 
+    deque<float> accelerations;
+    VertexArray accelerationLine;
+
 public:
     PendulumRenderer();
     explicit PendulumRenderer(float yThreshold, Vector2f startPosition);
     void initializeShapes(float yThreshold, Vector2f startPosition);
 
-    void setPendulumInfo(Vector2f barPos, float ang, Vector2f tipBallPos, float fit, int key, Mode m);
-
-    Vector2f getBarPosition();
+    void resetAccelerations();
+    void setPendulumInfo(Vector2f barPos, float ang, float accel, Vector2f tipBallPos, float fit, int key, Mode m);
 
     void draw(RenderWindow &window, Font &font, bool isControlled);
     void drawPendulum(RenderWindow &window);
-
+    void drawScale(RenderWindow &window, Font &font);
     void drawScore(RenderWindow &window, Font &font) const;
-    void drawInputs(RenderWindow &window, Font &font);
 
     static void drawControlledInfo(RenderWindow &window, Font &font);
+
+    void drawAccelerationChart(RenderWindow& window, Font& font);
+    void drawAccelerationChartBackground(RenderWindow &window);
+    void drawAccelerationScaleLines(RenderWindow &window);
+    void updateAccelerationLine();
+    void drawAccelerationText(RenderWindow &window, Font &font);
+
+    void drawManualMode(RenderWindow &window);
 };
 
 

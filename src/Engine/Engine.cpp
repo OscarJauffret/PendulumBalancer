@@ -48,12 +48,12 @@ float Engine::run(float accelerationFactor) {
             checkTipPosition();
             incrementFitness();
             framesElapsed++;
+            pendulum.draw(fitness, key, mode);
+            if (mode == Mode::Manual) {
+                pendulum.askToRender(window);
+            }
         }
 
-        pendulum.draw(fitness, key, mode);
-    }
-    if (framesElapsed != 1800) {
-        cout << "Agent played for " << framesElapsed << " frames" << endl;
     }
     return fitness;
 }
@@ -72,7 +72,8 @@ void Engine::incrementFitness() {
         float distanceFromCenter = abs(pendulum.getPosition()) / (config::pendulum::dimensions::trackWidth / 2);
         float positionFactor = 1.0f/(distanceFromCenter + 1);
         float velocityFactor = 1.0f/(abs(pendulum.getAngularVelocity()) + 1);
-        fitness += positionFactor * velocityFactor;
+        float accelerationFactor = 1.0f/(abs(pendulum.getAcceleration()) + 1);
+        fitness += velocityFactor;
         timeAboveThreshold = 0;
     }
 }
@@ -85,12 +86,16 @@ float Engine::getInputValue(int inputId) {
             return pendulum.getAngleCos();          // Cosine of angle
         case 2:
             return pendulum.getAngleSin();          // Sine of angle
-        case 3:
-            return pendulum.getAngularVelocity() / 16;   // Angular velocity
-        case 4:
-            return pendulum.getAcceleration() / config::pendulum::acceleration;   // Normalized acceleration
+        case 3: {
+            ActivationPtr normalizer = ActivationFunction::getFunction(Activation::Tanh);
+            return normalizer(pendulum.getAngularVelocity());
+        }
+        case 4: {
+            ActivationPtr normalizer = ActivationFunction::getFunction(Activation::Tanh);
+            return normalizer(pendulum.getVelocity());
+        }
         case 5:
-            return pendulum.getVelocity() / 250;
+            return pendulum.getAcceleration() / config::pendulum::acceleration;   // Normalized acceleration
         default:
             return 0.0f;
     }

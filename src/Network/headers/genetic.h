@@ -25,6 +25,7 @@ using namespace std::chrono;
 class Genetic {
     int generation = 0;
     vector<float> scores = {};
+    int generationsSinceLastImprovement = 0;
     unsigned long long int duration;
     unsigned long long int lastDuration;
 
@@ -53,6 +54,8 @@ public:
     int tournamentSelection();
 
     void render(bool isControlled);
+
+    int selectRandomGenomeBasedOnFitness();
 };
 
 

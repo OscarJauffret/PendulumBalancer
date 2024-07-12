@@ -118,7 +118,7 @@ Button Renderer::createModeButton(bool isManualButton) {
     return Button(buttonX, buttonY, buttonWidth, buttonHeight, text, font);
 }
 
-Text Renderer::getText(const string &textToWrite, int charSize, Color color, Vector2f position) const {
+Text Renderer::getText(const string &textToWrite, int charSize, Color color, Vector2f position) const { //TODO: move to utils
     Text text;
     text.setFont(font);
     text.setString(textToWrite);

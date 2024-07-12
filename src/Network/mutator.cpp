@@ -4,7 +4,7 @@
 
 #include "headers/mutator.hpp"
 
-void Mutator::mutate(Genome &genome) {
+void Mutator::mutate(Genome &genome, int generationsSinceLastImprovement) {
     int numMutations = config::genetic::numberOfMutations;
     for (int i = 0; i < numMutations; i++) {
         if (RNG::proba(config::genetic::mut::weightAndBiasMutRate)) {
@@ -15,7 +15,13 @@ void Mutator::mutate(Genome &genome) {
             }
         }
     }
-    if (RNG::proba(config::genetic::mut::newNodeProba)) {
+    float multiplier = 1.0f;
+    if (generationsSinceLastImprovement > 100) {
+        multiplier = 3.0f;
+    } else if (generationsSinceLastImprovement > 50) {
+        multiplier = 2.0f;
+    }
+    if (RNG::proba(config::genetic::mut::newNodeProba * multiplier)) {
         newNode(genome);
     }
 
@@ -79,7 +85,7 @@ int Mutator::calculateNewNodeLayer(Genome &genome, const int fromLayer, const in
 
 void Mutator::initializeNewNodeAndConnections(Genome &genome, int from, int to, int newNodeLayer, double previousWeight) {
     genome.removeConnection(from, to);
-    int nodeId = genome.createNode(RNG::randomFloatBetweenMinus1And1(true), Activation::Relu, newNodeLayer, -1);
+    int nodeId = genome.createNode(RNG::randomFloatBetweenMinus1And1(false), Activation::Relu, newNodeLayer, -1);
     genome.addConnection(previousWeight, from, nodeId);
     genome.addConnection(1.0f, nodeId, to);
 }

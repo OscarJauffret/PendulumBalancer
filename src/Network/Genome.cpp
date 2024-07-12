@@ -9,11 +9,11 @@ Genome::Genome(int inputSize, bool randomBiases, bool randomlyWeightedConnection
 
     for (int i = 0; i < inputSize; i++) {
         bias = RNG::randomFloatBetweenMinus1And1(randomBiases);
-        createNode(bias, Activation::None, 0, -1);
+        createNode(0.0, Activation::None, 0, -1);
     }
 
     bias = RNG::randomFloatBetweenMinus1And1(randomBiases);
-    createNode(bias, Activation::Tanh, -1, -1);
+    createNode(0.0, Activation::Tanh, -1, -1);
 
     addWeightedConnections(randomlyWeightedConnections);
     fitness = 0;

@@ -25,6 +25,9 @@ Pendulum::Pendulum(RenderWindow &window, Vector2f startPosition, bool render, Pe
 
     barPosition = startPosition;
     tipBallPosition = Vector2f(startPosition.x, startPosition.y + length);
+    if (render) {
+        renderer.resetAccelerations();
+    }
 }
 
 void Pendulum::moveLeft() {
@@ -87,7 +90,7 @@ void Pendulum::checkCollision() {
 
 void Pendulum::draw(float fitness, int keyPressed, Mode mode) {
     if (render) {
-        renderer.setPendulumInfo(barPosition, angle, tipBallPosition, fitness, keyPressed, mode);
+        renderer.setPendulumInfo(barPosition, angle, baseAcceleration, tipBallPosition, fitness, keyPressed, mode);
     }
 }
 
@@ -117,4 +120,8 @@ float Pendulum::getAcceleration() const {
 
 float Pendulum::getVelocity() const {
     return baseVelocity;
+}
+
+void Pendulum::askToRender(RenderWindow& window) {
+    renderer.drawManualMode(window);
 }

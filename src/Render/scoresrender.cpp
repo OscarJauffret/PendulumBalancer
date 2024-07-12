@@ -19,7 +19,7 @@ void Renderer::drawScoresBackground() {
     window.draw(background);
 }
 
-void Renderer::drawScaleLines() {
+void Renderer::drawScaleLines() {       //TODO: extract this logic
     float x = config::layout::score::originX;
     float y = config::layout::score::originY;
     float width = config::layout::score::width;

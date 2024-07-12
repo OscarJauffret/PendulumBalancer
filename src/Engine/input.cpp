@@ -48,7 +48,7 @@ void Engine::handleWindowClosed(const Event &event) {
 
 int Engine::AiInput() {
     vector<float> inputs = {};
-    for (int i = 0; i < 6; i++) {
+    for (int i = 0; i < config::net::inputSize; i++) {
         inputs.push_back(getInputValue(i));
     }
     double accelerationPercentage = controllingAgent.predict(inputs);
