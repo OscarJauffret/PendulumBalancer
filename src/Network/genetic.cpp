@@ -29,7 +29,6 @@ void Genetic::train() {
         cout << "Generation: " << generation;
         population = selection();
         cout << " Best fitness: " << format("{:.2f}", population[0].getFitness()) << endl;
-//        cout << "Best genome: " << population[0] << endl;
         scores.push_back(population[0].getFitness());
         renderer.setNetworkGenome(population[0]);
 
@@ -88,9 +87,7 @@ void Genetic::replayBestGenome() {
         prom.set_value();
     }).detach();
 
-    // Wait for the thread to finish and update rendering while waiting
     while (fut.wait_for(chrono::seconds(0)) != future_status::ready){
-        // Traiter les événements de la fenêtre ici
         sf::Event event{};
         while (window.pollEvent(event)) {
             if (event.type == sf::Event::Closed) {
@@ -118,16 +115,14 @@ float Genetic::calculateTotalFitness() {
 }
 
 int Genetic::tournamentSelection() {
-    const int tournamentSize = 3; // Taille du tournoi, ajustez selon vos besoins
+    const int tournamentSize = 3;
     vector<int> tournamentParticipants;
 
-    // Sélectionner `tournamentSize` participants aléatoires
     for (int i = 0; i < tournamentSize; ++i) {
         int randomIndex = selectRandomGenomeBasedOnFitness();
         tournamentParticipants.push_back(randomIndex);
     }
 
-    // Trouver le meilleur participant dans le tournoi
     int bestParticipant = tournamentParticipants[0];
     float bestFitness = population[tournamentParticipants[0]].getFitness();
     for (int i = 1; i < tournamentParticipants.size(); ++i) {
@@ -182,13 +177,13 @@ vector<Genome> Genetic::trainAgents(vector<Genome> pop) {
             if (event.type == sf::Event::KeyPressed) {
                 if (event.key.code == sf::Keyboard::Space) {
                     showBest = !showBest;
+                    render(false);
                 }
             }
         }
         futures.erase(remove_if(futures.begin(), futures.end(),
                                 [](const future<void> &fut) { return fut.wait_for(chrono::seconds(0)) == future_status::ready; }),
                       futures.end());
-//        render(false);
     }
 
     return pop;

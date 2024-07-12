@@ -168,11 +168,11 @@ namespace config {
         constexpr float nodeRadius = 10.0f;
         constexpr float nodeOutlineThickness = 3.0f;
         constexpr float maximumConnectionThickness = 10.0f;
-        constexpr float minimumConnectionThickness = 1.0f;
+        constexpr float minimumConnectionThickness = 0.0f;
     }
 
     namespace net {
-        constexpr int inputSize = 5;
+        constexpr int inputSize = 6;
     }
 
     namespace genetic {

@@ -99,7 +99,8 @@ string &Renderer::getGenomeButtonText(int g, const string &path, string &text) c
         text = "New genome";
     } else {
         Genome genome = GenomeJSonRepository::loadGenomeFromFile(path);
-        text = format("Genome {} - Fitness: {:.2f} - Training time {}", g, genome.getFitness(), formatTime(genome.getTrainingTime()));
+        basic_string name = path.substr(path.find_last_of('/') + 1);
+        text = format("{} - Fitness: {:.2f} - Training time {}", name, genome.getFitness(), formatTime(genome.getTrainingTime()));
     }
     return text;
 }

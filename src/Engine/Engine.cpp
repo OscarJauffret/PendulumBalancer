@@ -73,7 +73,7 @@ void Engine::incrementFitness() {
         float positionFactor = 1.0f/(distanceFromCenter + 1);
         float velocityFactor = 1.0f/(abs(pendulum.getAngularVelocity()) + 1);
         float accelerationFactor = 1.0f/(abs(pendulum.getAcceleration()) + 1);
-        fitness += velocityFactor;
+        fitness += velocityFactor * positionFactor;
         timeAboveThreshold = 0;
     }
 }
@@ -81,7 +81,7 @@ void Engine::incrementFitness() {
 float Engine::getInputValue(int inputId) {
     switch (inputId) {
         case 0:
-            return pendulum.getPosition() / (config::pendulum::dimensions::trackWidth / 2);    // Normalized position
+            return pendulum.getPosition() / (config::pendulum::dimensions::trackWidth / 2);  // Normalized position
         case 1:
             return pendulum.getAngleCos();          // Cosine of angle
         case 2:
